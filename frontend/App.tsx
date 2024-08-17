@@ -42,7 +42,7 @@ function App() {
 
   return (
     <>
-      {/* <Header />
+      <Header />
 
       <div className="flex items-center justify-center flex-col">
         {connected ? (
@@ -58,7 +58,7 @@ function App() {
             <CardTitle>To get started Connect a wallet</CardTitle>
           </CardHeader>
         )}
-      </div> */}
+      </div>
       <Router>
         <Layout>
           <Sider

@@ -20,7 +20,7 @@ const Welcoming = () => {
             <div className="text-lg text-gray-500 mt-4 text-center">
               Deliver trusted healthcare and manage patient records with ease!
               <div className="italic text-sm mt-2">
-                Login with your Solana wallet to get started!
+                Login with your Aptos wallet to get started!
               </div>
             </div>
           </div>
