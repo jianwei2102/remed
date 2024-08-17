@@ -28,6 +28,14 @@ app.post('/users', async (req, res) => {
     res.json(user);
 });
 
+app.get('/users/:id', async (req, res) => {
+    const user = await User.findOne({
+        aptosAddress: req.params.id
+    });
+
+    res.json(user);
+});
+
 // Fetch all doctor requests
 app.get('/doctorRequests', async (req, res) => {
     const doctorRequests = await DoctorRequest.find();
