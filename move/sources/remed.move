@@ -1,4 +1,4 @@
-module todolist_addr::todolist {
+module remed::todolist {
     use aptos_framework::account;
     use std::vector;
     use std::signer;
@@ -18,7 +18,6 @@ module todolist_addr::todolist {
 
     struct EMRList has key {
         records: vector<EMR>,
-        set_emr_event: event::EventHandle<EMR>,
     }
 
     struct EMR has store, drop, copy {
@@ -43,7 +42,6 @@ module todolist_addr::todolist {
         // Initialize EMR list
         let emr_list = EMRList{
             records: vector::empty<EMR>(),
-            set_emr_event: account::new_event_handle<EMR>(account),
         };
         move_to(account, emr_list);
     }
@@ -114,6 +112,22 @@ module todolist_addr::todolist {
             j = j + 1;
         };
     }
+
+    // EMR Functions
+    public entry fun append_record(account: &signer, patient_address: address, record_hash: String, record_details: String, record_type: String) acquires EMRList {
+        // Get patient's list
+        let signer_address = signer::address_of(account);
+        let patient_EMR_list = borrow_global_mut<EMRList>(patient_address);
+
+        let new_emr = EMR {
+            record_hash,
+            record_details,
+            record_type,
+            added_by: signer_address,
+        };
+        vector::push_back(&mut patient_EMR_list.records, new_emr);
+    }
+
 
     // Errors
     const EUNAUTHORIZED: u64 = 1;
