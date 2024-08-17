@@ -1,4 +1,5 @@
-import { WalletSelector } from "./WalletSelector";
+import { ConnectWallet } from "@thirdweb-dev/react";
+// import { WalletSelector } from "./WalletSelector";
 
 export function Header() {
   return (
@@ -6,7 +7,11 @@ export function Header() {
       <h1 className="display">Boilerplate Template</h1>
 
       <div className="flex gap-2 items-center flex-wrap">
-        <WalletSelector />
+        {/* Solana wallet */}
+        {/* <WalletSelector /> */}
+
+        {/* Sepolia and Scroll Wallet */}
+        <ConnectWallet />
       </div>
     </div>
   );

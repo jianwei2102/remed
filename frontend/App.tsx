@@ -27,6 +27,7 @@ import {
   ModifyRecord,
 } from "./pages/index.tsx";
 import Test from "./pages/test";
+import { ConnectWallet } from "@thirdweb-dev/react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -92,7 +93,11 @@ function App() {
                 onClick={() => setCollapsed(!collapsed)}
               />
               <DateTime />
-              <WalletSelector />
+              {/* Aptos Wallet */}
+              {/* <WalletSelector /> */}
+
+              {/* Sepolia and Scroll Wallet */}
+              <ConnectWallet />
             </Header>
 
             <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
