@@ -25,6 +25,7 @@ const HomePage = () => {
     //   }
     // };
     // getProfile();
+    setPage("Register");
   }, []);
 
   return (

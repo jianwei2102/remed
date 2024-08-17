@@ -10,7 +10,7 @@ import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image 
 
 const { Option } = Select;
 
-const DoctorRegister = () => {
+const ResearcherRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   // const { connection } = useConnection();
@@ -344,4 +344,4 @@ const DoctorRegister = () => {
   );
 };
 
-export default DoctorRegister;
+export default ResearcherRegister;
