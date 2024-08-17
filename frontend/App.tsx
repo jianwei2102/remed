@@ -11,6 +11,22 @@ import { Button, Layout, theme } from "antd";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Logo, MenuList, ToggleThemeButton, DateTime } from "./components/index.tsx";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { WalletSelector } from "./components/WalletSelector.tsx";
+import {
+  HomePage,
+  Authorization,
+  MedicalRecords,
+  Medications,
+  LabResults,
+  DoctorAuthorization,
+  Profile,
+  DoctorProfile,
+  AppendRecord,
+  Settings,
+  ViewRecord,
+  ModifyRecord,
+} from "./pages/index.tsx";
+import Test from "./pages/test";
 
 const { Header, Sider, Content } = Layout;
 
@@ -76,7 +92,7 @@ function App() {
                 onClick={() => setCollapsed(!collapsed)}
               />
               <DateTime />
-              {/* <WalletConnect /> */}
+              <WalletSelector />
             </Header>
 
             <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
@@ -85,8 +101,8 @@ function App() {
                 style={{ padding: 24, background: colorBgContainer }}
               >
                 <Routes>
-                  {/* <Route path="/" element={<HomePage />} />
-                  <Route path="/authorization" element={<Authorization />} />
+                  <Route path="/" element={<HomePage />} />
+                  {/* <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
                   <Route path="/labResults" element={<LabResults />} />
@@ -99,7 +115,7 @@ function App() {
                   <Route path="/doctor/viewRecord" element={<ViewRecord />} />
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
-                  <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
+                   <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
                 </Routes>
               </div>
             </Content>
