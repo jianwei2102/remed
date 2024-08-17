@@ -1,14 +1,8 @@
-import { Wallet } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
 import { MedicationItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  decryptData,
-  fetchProfile,
-  fetchRecord,
-  processRecords,
-} from "../../utils/util";
+
+import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util";
 
 const Medications = () => {
   const navigate = useNavigate();
@@ -19,10 +13,7 @@ const Medications = () => {
   const [medicationHash, setMedicationHash] = useState<string[]>([]);
 
   const getMedication = useCallback(async () => {
-    let response: { status: string; data: any } = await fetchRecord(
-      connection,
-      wallet
-    );
+    let response: { status: string; data: any } = await fetchRecord(connection, wallet);
     if (response.status === "success") {
       let accountData = (
         response.data as {
@@ -36,9 +27,7 @@ const Medications = () => {
       ).records;
 
       // Filter records where recordType is "medication"
-      let filteredRecords = accountData
-        .filter((record) => record.recordType === "medication")
-        .reverse();
+      let filteredRecords = accountData.filter((record) => record.recordType === "medication").reverse();
 
       // Decrypt recordDetails
       let decryptedRecords = filteredRecords.map((record) => {
@@ -46,12 +35,10 @@ const Medications = () => {
       });
 
       // Process records
-      const processedRecords = processRecords(decryptedRecords).map(
-        (processedRecord: any) => ({
-          ...processedRecord,
-          addedBy: response.data.addedBy,
-        })
-      );
+      const processedRecords = processRecords(decryptedRecords).map((processedRecord: any) => ({
+        ...processedRecord,
+        addedBy: response.data.addedBy,
+      }));
 
       setMedications(processedRecords);
       setMedicationHash(filteredRecords.map((record) => record.recordHash));
@@ -96,28 +83,18 @@ const Medications = () => {
           />
         ))}
       {medications.filter((medication) => medication.current)?.length === 0 && (
-        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">
-          No current medical record found!
-        </div>
+        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">No current medical record found!</div>
       )}
 
       <div className="font-semibold text-lg mb-4">Past Medication</div>
       {medications
         .filter((medication) => !medication.current)
         .map((medication, index) => (
-          <MedicationItem
-            key={index}
-            medication={medication}
-            recordHash={medicationHash[index]}
-            sameDoctor={false}
-          />
+          <MedicationItem key={index} medication={medication} recordHash={medicationHash[index]} sameDoctor={false} />
         ))}
 
-      {medications.filter((medication) => !medication.current)?.length ===
-        0 && (
-        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">
-          No past medical record found!
-        </div>
+      {medications.filter((medication) => !medication.current)?.length === 0 && (
+        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">No past medical record found!</div>
       )}
     </div>
   );

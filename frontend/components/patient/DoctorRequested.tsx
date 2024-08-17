@@ -1,7 +1,6 @@
 import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { Wallet, web3 } from "@project-serum/anchor";
-import { useConnection } from "@solana/wallet-adapter-react";
+
 import { fetchProfile, decryptData } from "../../utils/util";
 import { Col, Row, Image, Button, message, Drawer, Divider } from "antd";
 
@@ -31,9 +30,7 @@ interface DescriptionItemProps {
 
 const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
   <div className="mb-[7px] text-black/65 text-[14px] leading-[1.5715]">
-    <span className="inline-block text-black/85">
-      {title ? `${title}:` : ""}
-    </span>
+    <span className="inline-block text-black/85">{title ? `${title}:` : ""}</span>
     <span
       className={`${title ? "ml-2" : ""}`}
       dangerouslySetInnerHTML={{
@@ -43,11 +40,7 @@ const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
   </div>
 );
 
-const DoctorRequested = ({
-  doctorDetails,
-  revokeRequestCallback,
-  authorizeRequestCallback,
-}: DoctorRequestedProps) => {
+const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeRequestCallback }: DoctorRequestedProps) => {
   const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -69,7 +62,7 @@ const DoctorRequested = ({
       if (response.status === "success") {
         const decryptedProfile = decryptData(
           (response.data as { personalDetails: string })["personalDetails"],
-          "profile"
+          "profile",
         );
         setProfile(JSON.parse(decryptedProfile));
         // console.log(JSON.parse(decryptedProfile));
@@ -112,9 +105,7 @@ const DoctorRequested = ({
           />
         </Col>
         <Col span={14} className="flex flex-col justify-center items-start">
-          <span className="bg-[#CCFCD9] text-[#008124] px-4 rounded-full">
-            {profile?.specialization}
-          </span>
+          <span className="bg-[#CCFCD9] text-[#008124] px-4 rounded-full">{profile?.specialization}</span>
           <span className="font-semibold text-lg">{profile?.fullName}</span>
           {profile?.affiliations}
           <div className="flex items-center justify-center">
@@ -135,55 +126,30 @@ const DoctorRequested = ({
           >
             View Profile
           </Button>
-          <Button
-            className="rounded-full mt-1 text-lg mr-4"
-            type="primary"
-            danger
-            block
-            onClick={revokeDoctorFunc}
-          >
+          <Button className="rounded-full mt-1 text-lg mr-4" type="primary" danger block onClick={revokeDoctorFunc}>
             Remove
           </Button>
         </Col>
       </Row>
 
       {/* Doctor Profile Drawer*/}
-      <Drawer
-        width={640}
-        placement="right"
-        closable={false}
-        onClose={onClose}
-        open={open}
-      >
-        <p className="block text-black/85 text-[18px] leading-[1.5715] mb-6">
-          Doctor Profile
-        </p>
-        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">
-          Personal Info
-        </p>
+      <Drawer width={640} placement="right" closable={false} onClose={onClose} open={open}>
+        <p className="block text-black/85 text-[18px] leading-[1.5715] mb-6">Doctor Profile</p>
+        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">Personal Info</p>
         <Row>
           <Col span={12}>
             <DescriptionItem title="Full Name" content={profile?.fullName} />
           </Col>
           <Col span={12}>
-            <DescriptionItem
-              title="Medical License Number"
-              content={profile?.medicalLicenseNumber}
-            />
+            <DescriptionItem title="Medical License Number" content={profile?.medicalLicenseNumber} />
           </Col>
         </Row>
         <Row>
           <Col span={12}>
-            <DescriptionItem
-              title="Affiliations"
-              content={profile?.affiliations}
-            />
+            <DescriptionItem title="Affiliations" content={profile?.affiliations} />
           </Col>
           <Col span={12}>
-            <DescriptionItem
-              title="Specialization"
-              content={profile?.specialization}
-            />
+            <DescriptionItem title="Specialization" content={profile?.specialization} />
           </Col>
         </Row>
         <Row>
@@ -191,49 +157,33 @@ const DoctorRequested = ({
             <DescriptionItem title="Work Hours" content={profile?.workHours} />
           </Col>
           <Col span={12}>
-            <DescriptionItem
-              title="Contact Details"
-              content={profile?.contactInformation}
-            />
+            <DescriptionItem title="Contact Details" content={profile?.contactInformation} />
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem
-              title="Language Spoken"
-              content={profile?.languagesSpoken.join(", ")}
-            />
+            <DescriptionItem title="Language Spoken" content={profile?.languagesSpoken.join(", ")} />
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem
-              title="Authorized Date"
-              content={doctorDetails.date}
-            />
+            <DescriptionItem title="Authorized Date" content={doctorDetails.date} />
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem
-              title="Account Address"
-              content={doctorDetails.address}
-            />
+            <DescriptionItem title="Account Address" content={doctorDetails.address} />
           </Col>
         </Row>
         <Divider />
-        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">
-          Education
-        </p>
+        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">Education</p>
         <Row>
           <Col span={24}>
             <DescriptionItem title="" content={profile?.education} />
           </Col>
         </Row>
         <Divider />
-        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">
-          Experience
-        </p>
+        <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">Experience</p>
         <Row>
           <Col span={24}>
             <DescriptionItem title="" content={profile?.experience} />
@@ -245,12 +195,7 @@ const DoctorRequested = ({
               className="rounded-full text-lg bg-[#1FC7C7] hover:!bg-[#16D1D1] mr-4 mt-2"
               type="primary"
               block
-              onClick={() =>
-                authorizeRequestCallback(
-                  doctorDetails.id,
-                  doctorDetails.address
-                )
-              }
+              onClick={() => authorizeRequestCallback(doctorDetails.id, doctorDetails.address)}
             >
               Authorize
             </Button>

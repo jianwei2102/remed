@@ -1,7 +1,6 @@
 import { FaStar } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { Wallet, web3 } from "@project-serum/anchor";
-import { useConnection } from "@solana/wallet-adapter-react";
+
 import { fetchProfile, decryptData } from "../../utils/util";
 import { Avatar, Button, Col, message, Row, Image } from "antd";
 
@@ -39,10 +38,7 @@ interface PatientRequestedProps {
   revokePatientCallback: (patientId: string) => void;
 }
 
-const PatientRequested = ({
-  patientDetails,
-  revokePatientCallback,
-}: PatientRequestedProps) => {
+const PatientRequested = ({ patientDetails, revokePatientCallback }: PatientRequestedProps) => {
   const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -56,7 +52,7 @@ const PatientRequested = ({
       if (response.status === "success") {
         const decryptedProfile = decryptData(
           (response.data as { personalDetails: string })["personalDetails"],
-          "profile"
+          "profile",
         );
         setProfile(JSON.parse(decryptedProfile));
       }

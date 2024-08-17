@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Wallet, web3 } from "@project-serum/anchor";
+
 import { Col, Row, Button, message, Drawer, Divider } from "antd";
 import { decryptData, fetchProfile, revokeDoctor } from "../../utils/util";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 
 interface AuthorizationCardProps {
-  doctorDetails: { address: string, date: string };
+  doctorDetails: { address: string; date: string };
   revokeDoctorCallback: (doctorAddress: string) => void;
 }
 
@@ -29,14 +28,14 @@ interface DescriptionItemProps {
 const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
   <div className="mb-[7px] text-black/65 text-[14px] leading-[1.5715]">
     <span className="inline-block text-black/85"> {title ? `${title}:` : ""}</span>
-    <span className={`${title ? "ml-2" : ""}`} dangerouslySetInnerHTML={{ __html: (content as string).replace(/\n/g, '<br />') }} />
+    <span
+      className={`${title ? "ml-2" : ""}`}
+      dangerouslySetInnerHTML={{ __html: (content as string).replace(/\n/g, "<br />") }}
+    />
   </div>
 );
 
-const AuthorizationCard = ({
-  doctorDetails,
-  revokeDoctorCallback,
-}: AuthorizationCardProps) => {
+const AuthorizationCard = ({ doctorDetails, revokeDoctorCallback }: AuthorizationCardProps) => {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
@@ -59,7 +58,8 @@ const AuthorizationCard = ({
       let response = await fetchProfile(connection, doctorWallet as Wallet);
       if (response.status === "success") {
         const decryptedProfile = decryptData(
-          (response.data as { personalDetails: string })["personalDetails"], "profile"
+          (response.data as { personalDetails: string })["personalDetails"],
+          "profile",
         );
         setProfile(JSON.parse(decryptedProfile));
       }
@@ -75,11 +75,7 @@ const AuthorizationCard = ({
       duration: 0,
     });
 
-    let response = await revokeDoctor(
-      connection,
-      wallet as Wallet,
-      doctorAddress
-    );
+    let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
     messageApi.destroy();
 
     if (response.status === "success") {
@@ -97,9 +93,7 @@ const AuthorizationCard = ({
       <Row className="border my-2 mr-2 py-4 px-8 rounded-lg">
         {contextHolder}
         <Col span={16} className="flex flex-col justify-center items-start">
-          <span className="bg-[#CCFCD9] text-[#008124] px-4 rounded-full">
-            {profile?.specialization}
-          </span>
+          <span className="bg-[#CCFCD9] text-[#008124] px-4 rounded-full">{profile?.specialization}</span>
           <span className="font-semibold text-lg">{profile?.fullName}</span>
           {profile?.affiliations}
           <span>
@@ -129,9 +123,7 @@ const AuthorizationCard = ({
 
       {/* Doctor Profile Drawer */}
       <Drawer width={640} placement="right" closable={false} onClose={onClose} open={open}>
-        <p className="block text-black/85 text-[18px] leading-[1.5715] mb-6">
-          Doctor Profile
-        </p>
+        <p className="block text-black/85 text-[18px] leading-[1.5715] mb-6">Doctor Profile</p>
         <p className="block mb-4 text-black/85 text-[16px] leading-[1.5715]">Personal Info</p>
         <Row>
           <Col span={12}>
@@ -159,15 +151,12 @@ const AuthorizationCard = ({
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title="Language Spoken" content={profile?.languagesSpoken.join(', ')} />
+            <DescriptionItem title="Language Spoken" content={profile?.languagesSpoken.join(", ")} />
           </Col>
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem
-              title="Authorized Date"
-              content={doctorDetails.date}
-            />
+            <DescriptionItem title="Authorized Date" content={doctorDetails.date} />
           </Col>
         </Row>
         <Row>

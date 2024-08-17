@@ -1,20 +1,10 @@
 import dayjs from "dayjs";
 import { format } from "date-fns";
-import { Wallet } from "@project-serum/anchor";
+
 import { useLocation } from "react-router-dom";
 import { appendRecord, generateHash } from "../../../utils/util";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Select,
-  Space,
-  TimePicker,
-} from "antd";
+
+import { Button, Card, DatePicker, Form, Input, message, Select, Space, TimePicker } from "antd";
 
 const MedicalRecord = () => {
   const [form] = Form.useForm();
@@ -33,11 +23,7 @@ const MedicalRecord = () => {
       date: format(values.date.toDate(), "dd-MM-yyyy"),
       time: format(values.time.toDate(), "hh:mm a"),
     };
-    const recordHash = generateHash(
-      JSON.stringify(record),
-      wallet.publicKey.toBase58(),
-      patientAddress
-    );
+    const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
     console.log(record, recordHash);
 
     messageApi.open({
@@ -52,7 +38,7 @@ const MedicalRecord = () => {
       recordHash,
       JSON.stringify(record),
       patientAddress,
-      "medicalRecords"
+      "medicalRecords",
     );
 
     messageApi.destroy();
@@ -110,30 +96,14 @@ const MedicalRecord = () => {
               ]}
             >
               <Select placeholder="Select Visit Type" style={{ width: "35%" }}>
-                <Select.Option value="Clinical Visit">
-                  Clinical Visit
-                </Select.Option>
-                <Select.Option value="Follow-Up Visit">
-                  Follow-Up Visit
-                </Select.Option>
-                <Select.Option value="Emergency Visit">
-                  Emergency Visit
-                </Select.Option>
-                <Select.Option value="Health Screening">
-                  Health Screening
-                </Select.Option>
-                <Select.Option value="Surgical Consultation">
-                  Surgical Consultation
-                </Select.Option>
-                <Select.Option value="Specialist Consultation">
-                  Specialist Consultation
-                </Select.Option>
-                <Select.Option value="Chronic Disease Management">
-                  Chronic Disease Management
-                </Select.Option>
-                <Select.Option value="Annual Physical Examination">
-                  Annual Physical Examination
-                </Select.Option>
+                <Select.Option value="Clinical Visit">Clinical Visit</Select.Option>
+                <Select.Option value="Follow-Up Visit">Follow-Up Visit</Select.Option>
+                <Select.Option value="Emergency Visit">Emergency Visit</Select.Option>
+                <Select.Option value="Health Screening">Health Screening</Select.Option>
+                <Select.Option value="Surgical Consultation">Surgical Consultation</Select.Option>
+                <Select.Option value="Specialist Consultation">Specialist Consultation</Select.Option>
+                <Select.Option value="Chronic Disease Management">Chronic Disease Management</Select.Option>
+                <Select.Option value="Annual Physical Examination">Annual Physical Examination</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item
@@ -163,17 +133,12 @@ const MedicalRecord = () => {
                 },
               ]}
             >
-              <Input.TextArea
-                placeholder="Common Cold"
-                style={{ width: "95%", height: "80px" }}
-              />
+              <Input.TextArea placeholder="Common Cold" style={{ width: "95%", height: "80px" }} />
             </Form.Item>
           </Card>
           <div className="flex flex-row gap-2">
             <Card title="Symptoms" className="basis-1/2 border-2">
-              <span className="italic">
-                Please try to add one or more symptoms diagnosed
-              </span>
+              <span className="italic">Please try to add one or more symptoms diagnosed</span>
               <Form.Item
                 className="mt-2"
                 name={"symptoms"}
@@ -298,20 +263,13 @@ const MedicalRecord = () => {
                 <Input placeholder="Clinic XYZ" style={{ width: "70%" }} />
               </Form.Item>
               <Form.Item name={"remark"} label="Remarks">
-                <Input.TextArea
-                  placeholder="Additional Information"
-                  style={{ width: "100%", height: "80px" }}
-                />
+                <Input.TextArea placeholder="Additional Information" style={{ width: "100%", height: "80px" }} />
               </Form.Item>
             </Card>
           </div>
         </Space>
         <Form.Item className="grid justify-items-end ">
-          <Button
-            type="primary"
-            htmlType="submit"
-            className=" px-8 py-4 mt-4 text-lg"
-          >
+          <Button type="primary" htmlType="submit" className=" px-8 py-4 mt-4 text-lg">
             Submit Record
           </Button>
         </Form.Item>

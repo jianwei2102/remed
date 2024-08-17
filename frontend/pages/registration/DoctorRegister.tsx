@@ -1,23 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Wallet } from "@project-serum/anchor";
+
 import { useNavigate } from "react-router-dom";
 import { createProfile } from "../../utils/util";
 import { useStorageUpload } from "@thirdweb-dev/react";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Form,
-  Row,
-  Col,
-  Input,
-  Button,
-  Select,
-  message,
-  Tooltip,
-  Avatar,
-  Image,
-} from "antd";
+
+import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image } from "antd";
 
 const { Option } = Select;
 
@@ -86,12 +75,7 @@ const DoctorRegister = () => {
       duration: 0,
     });
 
-    let response = await createProfile(
-      connection,
-      wallet,
-      "doctor",
-      JSON.stringify(formattedValues)
-    );
+    let response = await createProfile(connection, wallet, "doctor", JSON.stringify(formattedValues));
 
     await axios.post("http://localhost:4000/users", {
       username: combinedFullName,
@@ -138,11 +122,7 @@ const DoctorRegister = () => {
             ]}
           >
             <Input.Group compact>
-              <Form.Item
-                name={["fullName", "title"]}
-                noStyle
-                initialValue="Dr."
-              >
+              <Form.Item name={["fullName", "title"]} noStyle initialValue="Dr.">
                 <Select style={{ width: "25%" }} defaultValue="Dr.">
                   <Option value="Dr.">Dr.</Option>
                   <Option value="MD">MD</Option>
@@ -177,10 +157,7 @@ const DoctorRegister = () => {
               },
             ]}
           >
-            <Select
-              placeholder="Select Specialization"
-              style={{ width: "95%" }}
-            >
+            <Select placeholder="Select Specialization" style={{ width: "95%" }}>
               <Select.Option value="Radiologist">Radiologist</Select.Option>
               <Select.Option value="Oncologist">Oncologist</Select.Option>
               <Select.Option value="Neurologist">Neurologist</Select.Option>
@@ -188,12 +165,8 @@ const DoctorRegister = () => {
               <Select.Option value="Pediatrician">Pediatrician</Select.Option>
               <Select.Option value="Cardiologist">Cardiologist</Select.Option>
               <Select.Option value="Gynecologist">Gynecologist</Select.Option>
-              <Select.Option value="Ophthalmologist">
-                Ophthalmologist
-              </Select.Option>
-              <Select.Option value="General Practitioner">
-                General Practitioner
-              </Select.Option>
+              <Select.Option value="Ophthalmologist">Ophthalmologist</Select.Option>
+              <Select.Option value="General Practitioner">General Practitioner</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -220,10 +193,7 @@ const DoctorRegister = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Hospital ABC, Clinic XYZ"
-              style={{ width: "95%" }}
-            />
+            <Input placeholder="Hospital ABC, Clinic XYZ" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["workHours"]}
@@ -236,10 +206,7 @@ const DoctorRegister = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Mon-Fri 9:00 AM - 5:00 PM"
-              style={{ width: "95%" }}
-            />
+            <Input placeholder="Mon-Fri 9:00 AM - 5:00 PM" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["image"]}
@@ -247,11 +214,7 @@ const DoctorRegister = () => {
               <span className="flex justify-center items-center">
                 Profile Image
                 <Tooltip title="Image will be uploaded to IPFS">
-                  <Avatar
-                    size={20}
-                    className="bg-blue-300 ml-1"
-                    icon={<FaInfo />}
-                  />
+                  <Avatar size={20} className="bg-blue-300 ml-1" icon={<FaInfo />} />
                 </Tooltip>
               </span>
             }
@@ -269,9 +232,7 @@ const DoctorRegister = () => {
                 />
               </Col>
               <Col span={6} className="pl-2">
-                {fileUrl && (
-                  <Avatar size={48} icon={<Image src={fileUrl} alt="img" />} />
-                )}
+                {fileUrl && <Avatar size={48} icon={<Image src={fileUrl} alt="img" />} />}
               </Col>
             </Row>
           </Form.Item>
@@ -383,11 +344,7 @@ const DoctorRegister = () => {
       </Row>
 
       <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="px-8 py-4 mt-4 text-lg"
-        >
+        <Button type="primary" htmlType="submit" className="px-8 py-4 mt-4 text-lg">
           Create Profile
         </Button>
       </Form.Item>

@@ -1,21 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Wallet } from "@project-serum/anchor";
+
 import { decryptData, fetchProfile } from "../../utils/util";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Avatar,
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Image,
-  Modal,
-  QRCode,
-  QRCodeProps,
-  Row,
-  Space,
-} from "antd";
+
+import { Avatar, Button, Card, Col, Descriptions, Image, Modal, QRCode, QRCodeProps, Row, Space } from "antd";
 
 interface PatientDetails {
   name: string;
@@ -71,9 +59,7 @@ const Profile = () => {
   }
 
   const downloadQRCode = () => {
-    const canvas = document
-      .getElementById("myqrcode")
-      ?.querySelector<HTMLCanvasElement>("canvas");
+    const canvas = document.getElementById("myqrcode")?.querySelector<HTMLCanvasElement>("canvas");
     if (canvas) {
       const url = canvas.toDataURL();
       doDownload(url, "QRCode.png");
@@ -92,9 +78,7 @@ const Profile = () => {
       if (response.status === "success") {
         const role = (response.data as { role: string }).role;
         if (role === "patient") {
-          let personalDetails = (response.data as { personalDetails: string })[
-            "personalDetails"
-          ];
+          let personalDetails = (response.data as { personalDetails: string })["personalDetails"];
           let details = JSON.parse(decryptData(personalDetails, "profile"));
           setDetails(details);
           console.log("details", details);
@@ -128,9 +112,7 @@ const Profile = () => {
               </Col>
               <Col className="ml-2">
                 <div>{details?.patient.name}</div>
-                <div className="font-normal">
-                  {wallet?.publicKey.toBase58()}
-                </div>
+                <div className="font-normal">{wallet?.publicKey.toBase58()}</div>
               </Col>
             </Row>
           }
@@ -141,21 +123,11 @@ const Profile = () => {
           }
         >
           <Descriptions column={1}>
-            <Descriptions.Item label="Gender">
-              {details?.patient.gender}
-            </Descriptions.Item>
-            <Descriptions.Item label="Blood Group">
-              {details?.patient.bloodGroup}
-            </Descriptions.Item>
-            <Descriptions.Item label="Date of Birth">
-              {details?.patient.dateOfBirth}
-            </Descriptions.Item>
-            <Descriptions.Item label="Phone No.">
-              {details?.patient.phoneNo}
-            </Descriptions.Item>
-            <Descriptions.Item label="Address">
-              {details?.patient.address}
-            </Descriptions.Item>
+            <Descriptions.Item label="Gender">{details?.patient.gender}</Descriptions.Item>
+            <Descriptions.Item label="Blood Group">{details?.patient.bloodGroup}</Descriptions.Item>
+            <Descriptions.Item label="Date of Birth">{details?.patient.dateOfBirth}</Descriptions.Item>
+            <Descriptions.Item label="Phone No.">{details?.patient.phoneNo}</Descriptions.Item>
+            <Descriptions.Item label="Address">{details?.patient.address}</Descriptions.Item>
           </Descriptions>
         </Card>
 
@@ -175,33 +147,19 @@ const Profile = () => {
               </Col>
               <Col className="ml-2">
                 <div>{details?.nextOfKin.name}</div>
-                <div className="font-normal">
-                  {details?.nextOfKin.relationship}
-                </div>
+                <div className="font-normal">{details?.nextOfKin.relationship}</div>
               </Col>
             </Row>
           }
           style={{ width: "100%" }}
         >
           <Descriptions column={1}>
-            <Descriptions.Item label="Name">
-              {details?.nextOfKin.name}
-            </Descriptions.Item>
-            <Descriptions.Item label="Gender">
-              {details?.nextOfKin.gender}
-            </Descriptions.Item>
-            <Descriptions.Item label="Relationship">
-              {details?.nextOfKin.relationship}
-            </Descriptions.Item>
-            <Descriptions.Item label="Date of Birth">
-              {details?.nextOfKin.dateOfBirth}
-            </Descriptions.Item>
-            <Descriptions.Item label="Phone No.">
-              {details?.nextOfKin.phoneNo}
-            </Descriptions.Item>
-            <Descriptions.Item label="Address">
-              {details?.nextOfKin.address}
-            </Descriptions.Item>
+            <Descriptions.Item label="Name">{details?.nextOfKin.name}</Descriptions.Item>
+            <Descriptions.Item label="Gender">{details?.nextOfKin.gender}</Descriptions.Item>
+            <Descriptions.Item label="Relationship">{details?.nextOfKin.relationship}</Descriptions.Item>
+            <Descriptions.Item label="Date of Birth">{details?.nextOfKin.dateOfBirth}</Descriptions.Item>
+            <Descriptions.Item label="Phone No.">{details?.nextOfKin.phoneNo}</Descriptions.Item>
+            <Descriptions.Item label="Address">{details?.nextOfKin.address}</Descriptions.Item>
           </Descriptions>
         </Card>
       </Space>
@@ -214,15 +172,8 @@ const Profile = () => {
         width={420}
         centered
       >
-        <div
-          id="myqrcode"
-          className="flex flex-col justify-center items-center mt-4"
-        >
-          <QRCode
-            type={renderType}
-            bgColor="#fff"
-            value={wallet?.publicKey.toBase58()}
-          />
+        <div id="myqrcode" className="flex flex-col justify-center items-center mt-4">
+          <QRCode type={renderType} bgColor="#fff" value={wallet?.publicKey.toBase58()} />
           <Button type="primary" className="mt-4" onClick={downloadQRCode}>
             Download
           </Button>

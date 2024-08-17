@@ -1,18 +1,10 @@
 import dayjs from "dayjs";
 import { format } from "date-fns";
-import { Wallet } from "@project-serum/anchor";
+
 import { useLocation } from "react-router-dom";
 import { appendRecord, generateHash } from "../../../utils/util";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Button,
-  Collapse,
-  Form,
-  Input,
-  message,
-  Select,
-  InputNumber,
-} from "antd";
+
+import { Button, Collapse, Form, Input, message, Select, InputNumber } from "antd";
 
 const { Panel } = Collapse;
 
@@ -50,11 +42,7 @@ const Medication = () => {
       location: sessionStorage.getItem("affiliations")?.toString(),
     };
 
-    const recordHash = generateHash(
-      JSON.stringify(record),
-      wallet.publicKey.toBase58(),
-      patientAddress
-    );
+    const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
     console.log(record, recordHash);
 
     messageApi.open({
@@ -69,7 +57,7 @@ const Medication = () => {
       recordHash,
       JSON.stringify(record),
       patientAddress,
-      "medication"
+      "medication",
     );
 
     messageApi.destroy();
@@ -109,9 +97,7 @@ const Medication = () => {
         <Form.List name="medications" initialValue={[{}]}>
           {(fields, { add, remove }) => (
             <>
-              <Collapse
-                defaultActiveKey={fields.map((field) => field.key.toString())}
-              >
+              <Collapse defaultActiveKey={fields.map((field) => field.key.toString())}>
                 {fields.map(({ key, name, fieldKey, ...restField }) => (
                   <Panel
                     header={`Medication`}
@@ -136,28 +122,13 @@ const Medication = () => {
                         },
                       ]}
                     >
-                      <Select
-                        placeholder="Select Indication"
-                        style={{ width: "100%" }}
-                      >
-                        <Select.Option value="Antihypertension">
-                          Antihypertension
-                        </Select.Option>
-                        <Select.Option value="Pain Relief">
-                          Pain Relief
-                        </Select.Option>
-                        <Select.Option value="Antibiotic">
-                          Antibiotic
-                        </Select.Option>
-                        <Select.Option value="Anti-inflammatory">
-                          Anti-inflammatory
-                        </Select.Option>
-                        <Select.Option value="Antidepressant">
-                          Antidepressant
-                        </Select.Option>
-                        <Select.Option value="Antidiabetic">
-                          Antidiabetic
-                        </Select.Option>
+                      <Select placeholder="Select Indication" style={{ width: "100%" }}>
+                        <Select.Option value="Antihypertension">Antihypertension</Select.Option>
+                        <Select.Option value="Pain Relief">Pain Relief</Select.Option>
+                        <Select.Option value="Antibiotic">Antibiotic</Select.Option>
+                        <Select.Option value="Anti-inflammatory">Anti-inflammatory</Select.Option>
+                        <Select.Option value="Antidepressant">Antidepressant</Select.Option>
+                        <Select.Option value="Antidiabetic">Antidiabetic</Select.Option>
                       </Select>
                     </Form.Item>
                     <Form.Item
@@ -172,10 +143,7 @@ const Medication = () => {
                         },
                       ]}
                     >
-                      <Input
-                        placeholder="e.g. Paracetamol"
-                        style={{ width: "100%" }}
-                      />
+                      <Input placeholder="e.g. Paracetamol" style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item
                       {...restField}
@@ -189,22 +157,11 @@ const Medication = () => {
                         },
                       ]}
                     >
-                      <Select
-                        placeholder="Select Frequency"
-                        style={{ width: "100%" }}
-                      >
-                        <Select.Option value="Once a day">
-                          Once a day
-                        </Select.Option>
-                        <Select.Option value="Twice a day">
-                          Twice a day
-                        </Select.Option>
-                        <Select.Option value="Thrice a day">
-                          Thrice a day
-                        </Select.Option>
-                        <Select.Option value="Four times a day">
-                          Four times a day
-                        </Select.Option>
+                      <Select placeholder="Select Frequency" style={{ width: "100%" }}>
+                        <Select.Option value="Once a day">Once a day</Select.Option>
+                        <Select.Option value="Twice a day">Twice a day</Select.Option>
+                        <Select.Option value="Thrice a day">Thrice a day</Select.Option>
+                        <Select.Option value="Four times a day">Four times a day</Select.Option>
                       </Select>
                     </Form.Item>
                     <Form.Item
@@ -219,22 +176,11 @@ const Medication = () => {
                         },
                       ]}
                     >
-                      <Select
-                        placeholder="Select Administration Time"
-                        style={{ width: "100%" }}
-                      >
-                        <Select.Option value="Take in the morning">
-                          Take in the morning
-                        </Select.Option>
-                        <Select.Option value="Take before food">
-                          Take before food
-                        </Select.Option>
-                        <Select.Option value="Take after food">
-                          Take after food
-                        </Select.Option>
-                        <Select.Option value="Take before bedtime">
-                          Take before bedtime
-                        </Select.Option>
+                      <Select placeholder="Select Administration Time" style={{ width: "100%" }}>
+                        <Select.Option value="Take in the morning">Take in the morning</Select.Option>
+                        <Select.Option value="Take before food">Take before food</Select.Option>
+                        <Select.Option value="Take after food">Take after food</Select.Option>
+                        <Select.Option value="Take before bedtime">Take before bedtime</Select.Option>
                       </Select>
                     </Form.Item>
                     <Form.Item
@@ -249,31 +195,19 @@ const Medication = () => {
                         },
                       ]}
                     >
-                      <InputNumber
-                        placeholder="e.g. 7"
-                        style={{ width: "100%" }}
-                      />
+                      <InputNumber placeholder="e.g. 7" style={{ width: "100%" }} />
                     </Form.Item>
                   </Panel>
                 ))}
               </Collapse>
-              <Button
-                className="mt-2"
-                type="dashed"
-                onClick={() => add()}
-                block
-              >
+              <Button className="mt-2" type="dashed" onClick={() => add()} block>
                 Add New Medication
               </Button>
             </>
           )}
         </Form.List>
         <Form.Item className="grid justify-items-start">
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="w-[240px] px-8 py-4 mt-4 text-lg"
-          >
+          <Button type="primary" htmlType="submit" className="w-[240px] px-8 py-4 mt-4 text-lg">
             Submit Record
           </Button>
         </Form.Item>

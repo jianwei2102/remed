@@ -1,50 +1,33 @@
-import { Wallet } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
-import { closeAllAccounts, fetchProfile } from "../utils/util";
 import { useCallback, useEffect, useState } from "react";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Card,
-  Form,
-  Select,
-  Switch,
-  Button,
-  Divider,
-  Row,
-  Col,
-  Typography,
-  Modal,
-  message,
-} from "antd";
+
+import { Card, Form, Select, Switch, Button, Divider, Row, Col, Typography, Modal, message } from "antd";
 
 const { Option } = Select;
 const { Title } = Typography;
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { connection } = useConnection();
-  const wallet = useAnchorWallet() as Wallet;
 
   const [role, setRole] = useState("Patient");
 
   const checkAuthority = useCallback(async () => {
-    if (!connection || !wallet) {
-      navigate("/");
-      return;
-    }
-
-    let response = await fetchProfile(connection, wallet);
-    if (response.status === "success") {
-      const role = (response.data as { role: string }).role;
-      if (role === "patient") {
-        setRole("Patient");
-      } else if (role === "doctor") {
-        setRole("Doctor");
-      }
-    } else {
-      navigate("/");
-    }
-  }, [connection, wallet, navigate]);
+    // if (!connection || !wallet) {
+    //   navigate("/");
+    //   return;
+    // }
+    // let response = await fetchProfile(connection, wallet);
+    // if (response.status === "success") {
+    //   const role = (response.data as { role: string }).role;
+    //   if (role === "patient") {
+    //     setRole("Patient");
+    //   } else if (role === "doctor") {
+    //     setRole("Doctor");
+    //   }
+    // } else {
+    //   navigate("/");
+    // }
+  }, [navigate]);
 
   useEffect(() => {
     checkAuthority();
@@ -71,12 +54,10 @@ const Settings = () => {
       content: "This action cannot be undone.",
       onOk: async () => {
         try {
-          let response = await closeAllAccounts(connection, wallet);
-
-          if (response.status === "success") {
-            message.success("Account deleted successfully.");
-            navigate(0); // Redirect to the homepage or another appropriate page
-          }
+          // if (response.status === "success") {
+          //   message.success("Account deleted successfully.");
+          //   navigate(0); // Redirect to the homepage or another appropriate page
+          // }
         } catch (error) {
           message.error("Failed to delete account.");
         }
@@ -118,10 +99,7 @@ const Settings = () => {
             <Form.Item label="Dark Mode">
               <Row>
                 <Col span={24}>
-                  <Switch
-                    checked={darkMode}
-                    onChange={() => setDarkMode(!darkMode)}
-                  />
+                  <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
                 </Col>
               </Row>
             </Form.Item>
@@ -130,10 +108,7 @@ const Settings = () => {
             <Form.Item label="Two-Factor Authentication">
               <Row>
                 <Col span={24}>
-                  <Switch
-                    checked={twoFactorAuth}
-                    onChange={() => setTwoFactorAuth(!twoFactorAuth)}
-                  />
+                  <Switch checked={twoFactorAuth} onChange={() => setTwoFactorAuth(!twoFactorAuth)} />
                 </Col>
               </Row>
             </Form.Item>

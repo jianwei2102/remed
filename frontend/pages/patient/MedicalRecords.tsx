@@ -1,9 +1,7 @@
-import { Wallet } from "@project-serum/anchor";
 import { useNavigate } from "react-router-dom";
 import { MedicalRecordItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
 import { decryptData, fetchProfile, fetchRecord } from "../../utils/util";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 
 interface Record {
   recordHash: string;
@@ -37,9 +35,7 @@ const MedicalRecords = () => {
       ).records;
 
       // Filter records where recordType is "medicalRecord"
-      let filteredRecords = accountData.filter(
-        (record) => record.recordType === "medicalRecords"
-      );
+      let filteredRecords = accountData.filter((record) => record.recordType === "medicalRecords");
 
       // Decrypt and map recordDetails
       let decryptedRecords = filteredRecords.map((record) => ({
@@ -85,9 +81,7 @@ const MedicalRecords = () => {
       ))}
 
       {medicalRecords.length === 0 && (
-        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">
-          No medical record found!
-        </div>
+        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">No medical record found!</div>
       )}
     </div>
   );

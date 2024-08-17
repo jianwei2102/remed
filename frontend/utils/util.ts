@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-const CryptoJS = require("crypto-js");
+// const CryptoJS = require("crypto-js");
 
 const createProfile = async (role: String, personalDetails: String) => {
   try {
@@ -25,24 +25,24 @@ const fetchProfile = async () => {
 
 const encryptData = (data: String, dataType: String) => {
   // Encrypt the message using the key
-  if (dataType === "profile") {
-    return CryptoJS.AES.encrypt(data, process.env.REACT_APP_ENCRYPTION_KEY).toString();
-  } else if (dataType === "record") {
-    return CryptoJS.AES.encrypt(data, process.env.REACT_APP_EMR_ENCRYPTION_KEY).toString();
-  }
+  // if (dataType === "profile") {
+  //   return CryptoJS.AES.encrypt(data, process.env.REACT_APP_ENCRYPTION_KEY).toString();
+  // } else if (dataType === "record") {
+  //   return CryptoJS.AES.encrypt(data, process.env.REACT_APP_EMR_ENCRYPTION_KEY).toString();
+  // }
   return "";
 };
 
 const decryptData = (data: String, dataType: String) => {
   // Decrypt the encrypted message using the same key
-  if (dataType === "profile") {
-    let decrypted = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENCRYPTION_KEY);
-    // Convert the decrypted message from a CryptoJS object to a regular string
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  } else if (dataType === "record") {
-    let decrypted = CryptoJS.AES.decrypt(data, process.env.REACT_APP_EMR_ENCRYPTION_KEY);
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  }
+  // if (dataType === "profile") {
+  //   let decrypted = CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENCRYPTION_KEY);
+  //   // Convert the decrypted message from a CryptoJS object to a regular string
+  //   return decrypted.toString(CryptoJS.enc.Utf8);
+  // } else if (dataType === "record") {
+  //   let decrypted = CryptoJS.AES.decrypt(data, process.env.REACT_APP_EMR_ENCRYPTION_KEY);
+  //   return decrypted.toString(CryptoJS.enc.Utf8);
+  // }
   return "";
 };
 
@@ -100,9 +100,10 @@ const generateHash = (recordData: String, patientPubKey: String, doctorPubKey: S
   const combinedString = `${recordData}-${patientPubKey}-${doctorPubKey}`;
   console.log("Before Hash", combinedString);
   // Create SHA-256 hash
-  const hash = CryptoJS.SHA256(combinedString).toString(CryptoJS.enc.Hex);
-  console.log("After Hash", hash);
-  return hash;
+  // const hash = CryptoJS.SHA256(combinedString).toString(CryptoJS.enc.Hex);
+  // console.log("After Hash", hash);
+  // return hash;
+  return "";
 };
 
 const appendRecord = async (recordHash: string, record: string, patientAddress: string, recordType: string) => {
