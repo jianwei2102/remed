@@ -1,16 +1,12 @@
 [package]
-name = "remed"
+name = "boilerplate_template"
 version = "1.0.0"
 authors = []
 
 [addresses]
-remed_addr='734011f56f4a4750f31ab6a47eb8fb6a92ae0d4cac49745fc67ca5bb53729e37'
+module_addr = "_"
 
-[dev-addresses]
-
-[dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-core.git"
-rev = "mainnet"
-subdir = "aptos-move/framework/aptos-framework"
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", rev = "mainnet", subdir = "aptos-move/framework/aptos-framework" }
 
 [dev-dependencies]
