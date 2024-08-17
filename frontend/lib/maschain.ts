@@ -1,4 +1,3 @@
-
 export const creatMaschainWallet = async (data:any) => {    
     let response = await fetch(`${import.meta.env.VITE_APP_MASCHAIN_API_URL}api/wallet/create-user`,
     {

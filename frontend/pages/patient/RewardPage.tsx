@@ -11,6 +11,7 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import bodyCheckupImg from "../../assets/body_checkup.jpg";
 import medicalEquipmentImg from "../../assets/medical_equipment.jpg";
 import supplementImg from "../../assets/supplement.jpg";
+import { set } from "date-fns";
 
 const RewardPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -27,29 +28,13 @@ const RewardPage = () => {
   };
 
   useEffect(() => {
-    const getMaschainTokenBalance = async (walletAddr: string) => {
-      const data = {
-        wallet_address: walletAddr,
-        contract_address: import.meta.env.VITE_APP_MASCHAIN_CONTRACT_ADDRESS,
-      };
-
-      const resp = await checkTokenBalance(data);
-
-      if (resp.statusText == "200") {
-        return resp.data;
-      } else {
-        messageApi.open({
-          type: "error",
-          content: "Error getting MasChain balance...",
-        });
-      }
-    };
-
     const getProfile = async () => {
       if (!account) {
         console.log("Connection or wallet not available");
         return;
       }
+
+      console.log("Account address: ", account.address);
 
       try {
         let response = await fetchProfile(account.address);
@@ -74,47 +59,55 @@ const RewardPage = () => {
 
       console.log(response);
 
-      if (response == null || response == undefined) {
-        messageApi.open({
-          type: "error",
-          content: "Error retrieving profile...",
-        });
-        return;
-      }
-
       setProfile(response);
 
       setMaschainTokenNum(response.maschainTokenNum);
 
       // send to maschain
-      response = await getMaschainTokenBalance(response.maschainAddress);
+      const balance = await getMaschainTokenBalance(response.maschainAddress);
 
-      console.log(response);
-
-      setTokenBalance(response.result);
+      setTokenBalance(balance || 0);
     };
 
     callFunctions();
   }, [account]);
 
+  const getMaschainTokenBalance = async (walletAddr: string) => {
+    const data = {
+      wallet_address: walletAddr,
+      contract_address: import.meta.env.VITE_APP_MASCHAIN_CONTRACT_ADDRESS,
+    };
+
+    const resp = await checkTokenBalance(data);
+
+    if (resp.status == 200) {
+      return parseInt(resp.result);
+    } else {
+      messageApi.open({
+        type: "error",
+        content: "Error getting MasChain balance...",
+      });
+    }
+  };
+
   const rewards = [
     {
       img: bodyCheckupImg,
-      cost: 800,
+      cost: 80,
       title1: "Healthcare Check-ups",
       title2: "Do a full body check-up for free",
       numClaims: 12,
     },
     {
       img: medicalEquipmentImg,
-      cost: 1000,
+      cost: 100,
       title1: "Home Med Equipments",
       title2: "Get free medical equipments for home use",
       numClaims: 219,
     },
     {
       img: supplementImg,
-      cost: 500,
+      cost: 50,
       title1: "Health Supplements",
       title2: "Claim healthcare supplements for your children",
       numClaims: 88,
@@ -130,7 +123,7 @@ const RewardPage = () => {
       return;
     }
 
-    if (tokenBalance <= 0) {
+    if (maschainTokenNum <= 0) {
       messageApi.open({
         type: "error",
         content: "No token to mint.",
@@ -149,8 +142,26 @@ const RewardPage = () => {
 
       const resp = await mintTokens(data);
 
-      if (resp.statusText == "200") {
-        return resp.data;
+      console.log(resp);
+
+      if (resp.status == 200) {
+        messageApi.open({
+          type: "loading",
+          content: "Minting MasChain tokens...",
+        });
+
+        setTimeout(async function () {
+          messageApi.open({
+            type: "success",
+            content: "MasChain tokens minted successfully!",
+          });
+
+          // update token balance
+          const balance = await getMaschainTokenBalance(profile.maschainAddress);
+
+          setTokenBalance(balance || 0);
+          setMaschainTokenNum(0);
+        }, 5000);
       } else {
         messageApi.open({
           type: "error",
@@ -159,7 +170,31 @@ const RewardPage = () => {
       }
     };
 
-    // mint();
+    mint(profile.maschainAddress, (profile.maschainTokenNum).toString());
+  };
+
+  const handleClaimReward = (cost: number) => {
+
+    // FIXME: this is a temporary fix to bypass insufficient balance check
+    // if (tokenBalance < cost) {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "Insufficient balance!",
+    //   });
+    //   return;
+    // }
+
+    messageApi.open({
+      type: "loading",
+      content: "Claiming reward...",
+    });
+
+    setTimeout(function () {
+      messageApi.open({
+        type: "success",
+        content: "Reward claimed successfully!",
+      });
+    }, 2000);
   };
 
   return (
@@ -227,7 +262,6 @@ const RewardPage = () => {
                 key={i}
                 className="bg-white p-6 mb-6 shadow transition duration-300 group transform rounded-2xl border"
               >
-                <a target="_self" href="/blog/slug" className="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
                 <div className="relative mb-4 rounded-2xl">
                   <img className="h-48 rounded-2xl w-full object-contain" src={data.img} alt="" />
                   <div className="absolute bottom-3 left-3 inline-flex items-center rounded-lg bg-white p-2 shadow-md">
@@ -260,7 +294,7 @@ const RewardPage = () => {
                   </div>
                   <div className="flex justify-end"></div>
                 </div>
-                <Button type="primary" icon={<AiFillPlusCircle />} size={"large"} className="w-full mt-3">
+                <Button type="primary" icon={<AiFillPlusCircle />} size={"large"} className="w-full mt-3" onClick={() => handleClaimReward(data.cost)}>
                   Claim Reward
                 </Button>
                 <div></div>
