@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useStorageUpload } from "@thirdweb-dev/react";
 import { Button, Form, Input, Select, DatePicker, Row, Col, message, Image, Avatar, Tooltip } from "antd";
 import { creatMaschainWallet } from "@/lib/maschain";
-import { createProfile } from "../../utils/util.ts";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 const PatientRegister = () => {
@@ -108,7 +107,7 @@ const PatientRegister = () => {
 
       let response = await axios.post("http://localhost:4000/users", {
         userInfo: JSON.stringify(formattedValues),
-        aptosAddress: account?.address,
+        address: account?.address,
         maschainAddress: formattedValues.patient.maschainAddress,
         role: "patient",
       });

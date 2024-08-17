@@ -1,9 +1,12 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { fetchProfile } from "../utils/util.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Welcoming, UserRegister, PatientDashboard, DoctorDashboard } from ".";
 
 const HomePage = () => {
   let [page, setPage] = useState("Register");
+  const { account, connected } = useWallet();
 
   useEffect(() => {
     // const getProfile = async () => {
@@ -25,8 +28,47 @@ const HomePage = () => {
     //   }
     // };
     // getProfile();
-    setPage("Register");
-  }, []);
+
+    const getProfile = async () => {
+      
+      if (!account) {
+        console.log("Connection or wallet not available");
+        setPage("Welcoming");
+        return;
+      }
+
+      try {
+        let response = await fetchProfile(account.address);
+        
+        console.log(response);
+
+        if (response.status === "success") {
+          if (response.data === null) {
+            setPage("Register");
+            return;
+          }
+
+          if (response.data.role === "patient") {
+            setPage("Patient");
+          } else if (response.data.role === "doctor") {
+            setPage("Doctor");
+          } else if (response.data.role === "researcher") {
+            setPage("Researcher");
+          }
+        } else {
+          // Direct to register if unable to find profile
+          setPage("Register");
+        }
+        
+      } catch (error) {
+        setPage("Register");
+      }
+
+    }
+
+    getProfile();
+
+  }, [account]);
 
   return (
     <>

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
-import { createProfile } from "../../utils/util.ts";
 import { useStorageUpload } from "@thirdweb-dev/react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
@@ -78,7 +77,7 @@ const DoctorRegister = () => {
 
       let response = await axios.post("http://localhost:4000/users", {
         userInfo: JSON.stringify(formattedValues),
-        aptosAddress: account?.address,
+        address: account?.address,
         maschainAddress: "",
         role: "doctor",
       });

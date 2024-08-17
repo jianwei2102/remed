@@ -3,8 +3,8 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
-import { createProfile } from "../../utils/util";
 import { useStorageUpload } from "@thirdweb-dev/react";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image } from "antd";
 
@@ -15,55 +15,91 @@ const ResearcherRegister = () => {
   const navigate = useNavigate();
   // const { connection } = useConnection();
   // const wallet = useAnchorWallet() as Wallet;
-  // const { mutateAsync: upload } = useStorageUpload();
+  const { mutateAsync: upload } = useStorageUpload();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
+  const { account, connected } = useWallet();
 
-  // const uploadToIpfs = async (file: File) => {
-  //   try {
-  //     const uploadUrl = await upload({
-  //       data: [file],
-  //       options: {
-  //         uploadWithoutDirectory: true,
-  //         uploadWithGatewayUrl: true,
-  //       },
-  //     });
+  const uploadToIpfs = async (file: File) => {
+    try {
+      const uploadUrl = await upload({
+        data: [file],
+        options: {
+          uploadWithoutDirectory: true,
+          uploadWithGatewayUrl: true,
+        },
+      });
 
-  //     const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
-  //     console.log("IPFS CID:", cid);
-  //     return cid;
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //     throw error;
-  //   }
-  // };
+      const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
+      console.log("IPFS CID:", cid);
+      return cid;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  };
 
   const onFinish = async (values: any) => {
-    // Combine the title and full name
-    // const { fullName, ...rest } = values;
-    // const combinedFullName = `${fullName.title} ${fullName.name}`;
-    // // Update the values with the combined full name
-    // const formattedValues = {
-    //   ...rest,
-    //   fullName: combinedFullName,
-    // };
-    // try {
-    //   messageApi.open({
-    //     type: "loading",
-    //     content: "Uploading image file(s) to IPFS..",
-    //     duration: 0,
-    //   });
-    //   if (file) {
-    //     const cid = await uploadToIpfs(file);
-    //     formattedValues.image = cid; // Replace image with CID
-    //   }
-    //   messageApi.destroy();
-    //   console.log("Received values of form: ", formattedValues);
-    // } catch (error) {
-    //   console.error("Error uploading file(s) to IPFS:", error);
-    // }
+
+    const formattedValues = {
+      ...values,
+    };
+  
+    // Upload Image
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Uploading image file(s) to IPFS..",
+        duration: 0,
+      });
+      if (file) {
+        const cid = await uploadToIpfs(file);
+        formattedValues.image = cid; // Replace image with CID
+      }
+      messageApi.destroy();
+    } catch (error) {
+      console.error("Error uploading file(s) to IPFS:", error);
+    }
+
+    // Add User to Database
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Adding information to database in progress..",
+        duration: 0,
+      });
+
+      let response = await axios.post("http://localhost:4000/users", {
+        userInfo: JSON.stringify(formattedValues),
+        address: account?.address,
+        maschainAddress: "",
+        role: "researcher",
+      });
+
+      messageApi.destroy();
+      console.log(response);
+
+      if (response.statusText === "OK") {
+        messageApi.open({
+          type: "success",
+          content: "User profile created successfully",
+        });
+        setTimeout(() => {
+          navigate("/researcher/purchaseRecord");
+        }, 500);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Error creating user profile",
+        });
+      }
+
+    } catch (error) {
+      console.error("Error adding information to database:", error);
+    }
+
     // messageApi.open({
     //   type: "loading",
     //   content: "Transaction in progress..",
@@ -139,7 +175,7 @@ const ResearcherRegister = () => {
             ]}
           ></Form.Item> */}
           <Form.Item
-            name={["patient", "name"]} // Nested field for patient name
+            name={["name"]}
             label="Full Name"
             required
             rules={[{ required: true, message: "Please input the user's full name!" }]}
@@ -147,7 +183,7 @@ const ResearcherRegister = () => {
             <Input placeholder="Kyle Robinson" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
-            name={["patient", "ic"]} // Nested field for patient name
+            name={["ic"]}
             label="IC"
             required
             rules={[{ required: true, message: "Please input the user's IC!" }]}

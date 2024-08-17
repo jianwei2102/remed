@@ -108,6 +108,7 @@ function App() {
                   <Route path="/purchaseRecord" element={<PurchaseRecord />} />
                   <Route path="/collection" element={<Collection />} />
                   <Route path="/authorization" element={<Authorization />} />
+                  <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
                   <Route path="/labResults" element={<LabResults />} />
@@ -119,6 +120,7 @@ function App() {
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
                   <Route path="/doctor/profile" element={<DoctorProfile />} />
+                  <Route path="/researcher/purchaseRecord" element={<PurchaseRecord />} />
                 </Routes>
               </div>
             </Content>
