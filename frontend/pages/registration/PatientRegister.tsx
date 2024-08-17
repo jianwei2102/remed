@@ -10,7 +10,7 @@ import { Button, Form, Input, Select, DatePicker, Row, Col, message, Image, Avat
 const PatientRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { mutateAsync: upload } = useStorageUpload();
+  // const { mutateAsync: upload } = useStorageUpload();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [nokFile, setNokFile] = useState<File | undefined>();
@@ -18,24 +18,24 @@ const PatientRegister = () => {
   const [patientFile, setPatientFile] = useState<File | undefined>();
   const [patientFileUrl, setPatientFileUrl] = useState<string | undefined>();
 
-  const uploadToIpfs = async (file: File) => {
-    try {
-      const uploadUrl = await upload({
-        data: [file],
-        options: {
-          uploadWithoutDirectory: true,
-          uploadWithGatewayUrl: true,
-        },
-      });
+  // const uploadToIpfs = async (file: File) => {
+  //   try {
+  //     const uploadUrl = await upload({
+  //       data: [file],
+  //       options: {
+  //         uploadWithoutDirectory: true,
+  //         uploadWithGatewayUrl: true,
+  //       },
+  //     });
 
-      const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
-      console.log("IPFS CID:", cid);
-      return cid;
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error;
-    }
-  };
+  //     const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
+  //     console.log("IPFS CID:", cid);
+  //     return cid;
+  //   } catch (error) {
+  //     console.error("Error uploading file:", error);
+  //     throw error;
+  //   }
+  // };
 
   const onFinish = async (values: any) => {
     // const formattedValues = {
