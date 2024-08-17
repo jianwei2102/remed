@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
+    aptosAddress: {
+        type: String,
+        required: true
+    },
+    maschainAddress: {
         type: String,
         required: true
     },
@@ -13,6 +17,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    maschainTokenNum: {
+        type: Number,
+        default: 0
+    }
 });
 
 const User = mongoose.model('User', userSchema);
