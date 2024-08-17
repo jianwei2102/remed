@@ -15,6 +15,7 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { WalletSelector } from "./components/WalletSelector.tsx";
 import {
   HomePage,
+  PurchaseRecord,
   Authorization,
   MedicalRecords,
   Medications,
@@ -103,6 +104,7 @@ function App() {
               >
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/purchaseRecord" element={<PurchaseRecord />} />
                   {/* <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />

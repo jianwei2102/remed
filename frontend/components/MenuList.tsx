@@ -36,6 +36,12 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
         label: "Homepage",
         onClick: () => navigate("/"),
       },
+      {
+        key: "/purchaseRecord",
+        icon: <PiUserCheck size={18} />,
+        label: "Purchase Record",
+        onClick: () => navigate("/purchaseRecord"),
+      },
     ],
     [navigate],
   );
