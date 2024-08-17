@@ -11,8 +11,8 @@ import { WalletProvider } from "@/components/WalletProvider.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WalletProvider>
-          <App />
-          <Toaster />
+      <App />
+      <Toaster />
     </WalletProvider>
   </React.StrictMode>,
 );

@@ -3,7 +3,7 @@ import { fetchProfile } from "../utils/util.ts";
 import { Welcoming, UserRegister, PatientDashboard, DoctorDashboard } from ".";
 
 const HomePage = () => {
-  let [page, setPage] = useState("Welcoming");
+  let [page, setPage] = useState("Register");
 
   useEffect(() => {
     // const getProfile = async () => {

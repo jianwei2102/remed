@@ -8,6 +8,7 @@ import { AccountInfo } from "@/components/AcoountInfo";
 
 import { useState } from "react";
 import { Button, Layout, theme } from "antd";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Logo, MenuList, ToggleThemeButton, DateTime } from "./components/index.tsx";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
@@ -41,7 +42,7 @@ function App() {
   } = theme.useToken();
 
   return (
-    <>
+    <ThirdwebProvider clientId={import.meta.env.VITE_APP_ThirdWeb_Client_ID}>
       {/* <Header />
 
       <div className="flex items-center justify-center flex-col">
@@ -122,7 +123,7 @@ function App() {
           </Layout>
         </Layout>
       </Router>
-    </>
+    </ThirdwebProvider>
   );
 }
 
