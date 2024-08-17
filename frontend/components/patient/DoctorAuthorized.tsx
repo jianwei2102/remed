@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 
 import { Col, Row, Image, Button, message, Drawer, Divider } from "antd";
 import { fetchProfile, revokeDoctor, decryptData } from "../../utils/util.ts";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
 
 interface DoctorAuthorizedProps {
   doctorDetails: { address: string; date: string };
@@ -52,39 +55,60 @@ const DoctorAuthorized = ({ doctorDetails, revokeDoctorCallback }: DoctorAuthori
     setOpen(false);
   };
 
+  const { account, signAndSubmitTransaction } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   useEffect(() => {
-    // const getProfile = async () => {
-    //   const publicKey = new web3.PublicKey(doctorDetails.address);
-    //   const doctorWallet = { publicKey };
-    //   let response = await fetchProfile(connection, doctorWallet as Wallet);
-    //   if (response.status === "success") {
-    //     const decryptedProfile = decryptData(
-    //       (response.data as { personalDetails: string })["personalDetails"],
-    //       "profile",
-    //     );
-    //     setProfile(JSON.parse(decryptedProfile));
-    //     // console.log(JSON.parse(decryptedProfile));
-    //   }
-    // };
-    // getProfile();
+    const getProfile = async () => {
+      if (blockchain === "Ethereum") {
+        setWallet(connectedAddress ? connectedAddress : "");
+      } else if (blockchain === "Aptos") {
+        setWallet(account?.address ? account?.address : "");
+      }
+
+      let response = await fetchProfile(doctorDetails.address);
+      let userInfo = (response.data as { userInfo: string })["userInfo"];
+      setProfile(JSON.parse(userInfo));
+    };
+    getProfile();
   }, [doctorDetails]);
 
   const revokeDoc = async (doctorAddress: string) => {
-    //   messageApi.open({
-    //     type: "loading",
-    //     content: "Transaction in progress..",
-    //     duration: 0,
-    //   });
-    //   let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
-    //   messageApi.destroy();
-    //   if (response.status === "success") {
-    //     revokeDoctorCallback(doctorAddress);
-    //   } else {
-    //     messageApi.open({
-    //       type: "error",
-    //       content: "Error revoking doctor profile",
-    //     });
-    //   }
+    messageApi.open({
+      type: "loading",
+      content: "Transaction in progress..",
+      duration: 0,
+    });
+
+    // Remed Contract - Aptos
+    if (import.meta.env.VITE_APP_BlockChain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::revoke_auth`,
+          functionArguments: [doctorAddress],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+
+        messageApi.destroy();
+        // if (response.status === "success") {
+        revokeDoctorCallback(doctorAddress);
+        // } else {
+        //   messageApi.open({
+        //     type: "error",
+        //     content: "Error revoking doctor profile",
+        //   });
+        // }
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
   };
 
   return (

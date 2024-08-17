@@ -35,6 +35,8 @@ const Authorization = () => {
 
   const { account } = useWallet();
   const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
 
   const getAuthPatient = useCallback(async () => {
     // if (connection && wallet) {
@@ -67,13 +69,10 @@ const Authorization = () => {
   }, []);
 
   const checkAuthority = useCallback(async () => {
-    let blockchain = import.meta.env.VITE_APP_BlockChain;
-    let wallet: any = null;
-    console.log(blockchain);
     if (blockchain === "Ethereum") {
-      wallet = connectedAddress;
+      setWallet(connectedAddress ? connectedAddress : "");
     } else if (blockchain === "Aptos") {
-      wallet = account?.address;
+      setWallet(account?.address ? account?.address : "");
     } else {
       navigate("/");
     }
@@ -154,7 +153,7 @@ const Authorization = () => {
 
     let response = await axios.post("http://localhost:4000/doctorRequests", {
       patientAddress: patientAddress,
-      doctorAddress: "wallet.publicKey.toBase58()",
+      doctorAddress: wallet,
       requestDate: format(dayjs().toDate(), "MMMM d, yyyy"),
     });
 
