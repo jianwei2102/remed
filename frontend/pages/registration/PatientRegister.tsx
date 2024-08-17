@@ -38,20 +38,23 @@ const PatientRegister = () => {
   // };
 
   const onFinish = async (values: any) => {
-    // const formattedValues = {
-    //   ...values,
-    //   patient: {
-    //     ...values.patient,
-    //     dateOfBirth: format(new Date(values.patient.dateOfBirth), "dd-MM-yyyy"),
-    //   },
-    //   nextOfKin: {
-    //     ...values.nextOfKin,
-    //     dateOfBirth: format(
-    //       new Date(values.nextOfKin.dateOfBirth),
-    //       "dd-MM-yyyy"
-    //     ),
-    //   },
-    // };
+    const formattedValues = {
+      ...values,
+      patient: {
+        ...values.patient,
+        dateOfBirth: format(new Date(values.patient.dateOfBirth), "dd-MM-yyyy"),
+      },
+      nextOfKin: {
+        ...values.nextOfKin,
+        dateOfBirth: format(
+          new Date(values.nextOfKin.dateOfBirth),
+          "dd-MM-yyyy"
+        ),
+      },
+    };
+
+    console.log(formattedValues);
+
     // try {
     //   messageApi.open({
     //     type: "loading",
@@ -120,6 +123,14 @@ const PatientRegister = () => {
             rules={[{ required: true, message: "Please input the user's full name!" }]}
           >
             <Input placeholder="Samuel Robinson" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["patient", "ic"]} // Nested field for patient name
+            label="IC"
+            required
+            rules={[{ required: true, message: "Please input the user's IC!" }]}
+          >
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["patient", "gender"]} // Nested field for patient gender
@@ -235,6 +246,19 @@ const PatientRegister = () => {
             ]}
           >
             <Input placeholder="Fave Robinson" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["nextOfKin", "ic"]} // Nested field for next of kin name
+            label="IC"
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input the next of kin's IC!",
+              },
+            ]}
+          >
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["nextOfKin", "gender"]} // Nested field for next of kin gender
