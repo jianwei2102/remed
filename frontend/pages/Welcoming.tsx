@@ -6,11 +6,7 @@ const Welcoming = () => {
     <>
       <Row className="flex justify-center mt-32">
         <Col>
-          <img
-            className="w-full h-full object-contain"
-            src={img}
-            alt="Patient Illustration"
-          />
+          <img className="w-full h-full object-contain" src={img} alt="Patient Illustration" />
         </Col>
       </Row>
       <Row className="flex justify-center mt-16">
@@ -19,9 +15,7 @@ const Welcoming = () => {
             <div className="text-4xl font-semibold">Welcome to ReMed</div>
             <div className="text-lg text-gray-500 mt-4 text-center">
               Deliver trusted healthcare and manage patient records with ease!
-              <div className="italic text-sm mt-2">
-                Login with your Aptos wallet to get started!
-              </div>
+              <div className="italic text-sm mt-2">Login with your Aptos wallet to get started!</div>
             </div>
           </div>
         </Col>

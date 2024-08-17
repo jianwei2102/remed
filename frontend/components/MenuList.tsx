@@ -5,13 +5,15 @@ import { CgPill } from "react-icons/cg";
 import { FiFileText } from "react-icons/fi";
 import { AiOutlineUser } from "react-icons/ai";
 import { LiaFileMedicalAltSolid } from "react-icons/lia";
-// import { fetchProfile, decryptData } from "../utils/util.ts";
+import { fetchProfile, decryptData } from "../utils/util.ts";
 import { useNavigate, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useMemo } from "react";
 // import { MdOutlineNotificationsActive } from "react-icons/md";
 import { PiUserCheck, PiTestTubeDuotone } from "react-icons/pi";
 import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai";
 import { AiFillGift, AiOutlineGift } from "react-icons/ai";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+
 
 interface MenuListProps {
   darkTheme: boolean;
@@ -28,6 +30,7 @@ interface MenuItem {
 const MenuList = ({ darkTheme }: MenuListProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { account, connected } = useWallet();
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
@@ -50,6 +53,12 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
         icon: <AiOutlineGift size={18} />,
         label: "Rewards",
         onClick: () => navigate("/rewards"),
+      },
+      {
+        key: "/collection",
+        icon: <PiUserCheck size={18} />,
+        label: "Collection",
+        onClick: () => navigate("/collection"),
       },
     ],
     [navigate],
@@ -172,8 +181,57 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
     ];
   }, [navigate, location.pathname]);
 
+  const researcherItems = useMemo(() => {
+    return [
+      {
+        key: "/",
+        icon: <AiOutlineHome size={18} />,
+        label: "Dashboard",
+        onClick: () => navigate("/"),
+      },
+      {
+        key: "/purchaseRecord",
+        icon: <PiUserCheck size={18} />,
+        label: "Purchase Record",
+        onClick: () => navigate("/purchaseRecord"),
+      },
+      // {
+      //   key: "/doctor/profile",
+      //   icon: <AiOutlineUser size={18} />,
+      //   label: "Profile",
+      //   onClick: () => navigate("/doctor/profile"),
+      // },
+      {
+        key: "/settings",
+        icon: <AiOutlineSetting size={18} />,
+        label: "Settings",
+        onClick: () => navigate("/settings"),
+      },
+    ];
+  }, [navigate, location.pathname]);
+
   useEffect(() => {
     setMenuItems(defaultItem);
+
+    const getProfile = async () => {
+      if (account) {
+        let response = await fetchProfile(account.address);
+        if (response.status === "success") {
+          if (response.data.role === "patient") {
+            setMenuItems(patientItems);
+          } else if (response.data.role === "doctor") {
+            setMenuItems(doctorItems);
+          } else if (response.data.role === "researcher") {
+            setMenuItems(researcherItems);
+          }
+        }
+      } else {
+        setMenuItems(defaultItem);
+      }
+    }
+
+    getProfile();
+
     // if (wallet && connection) {
     //   fetchProfile(connection, wallet as Wallet).then((data) => {
     //     if (data.status === "success") {
@@ -194,7 +252,7 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
     // } else {
     //   setMenuItems(defaultItem);
     // }
-  }, [defaultItem, patientItems, doctorItems]);
+  }, [account, defaultItem, patientItems, doctorItems]);
 
   return (
     <Menu

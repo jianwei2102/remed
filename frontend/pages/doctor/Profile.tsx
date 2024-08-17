@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { decryptData, fetchProfile } from "../../utils/util.ts";
 import { Avatar, Button, Card, Col, Descriptions, Image, Modal, QRCode, QRCodeProps, Row, Space } from "antd";
 
@@ -19,9 +20,10 @@ interface ProfileDetails {
 const Profile = () => {
   const navigate = useNavigate();
 
-  const [details, setDetails] = useState<ProfileDetails | null>(null);
+  const { account, connected } = useWallet();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [renderType] = useState<QRCodeProps["type"]>("canvas");
+  const [details, setDetails] = useState<ProfileDetails | null>(null);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -51,29 +53,29 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // const getProfile = async () => {
-    //   if (!connection || !wallet) {
-    //     console.log("Connection or wallet not found!");
-    //     navigate("/");
-    //     return;
-    //   }
-    //   let response = await fetchProfile(connection, wallet);
-    //   if (response.status === "success") {
-    //     const role = (response.data as { role: string }).role;
-    //     if (role === "patient") {
-    //       navigate("/");
-    //     } else if (role === "doctor") {
-    //       let personalDetails = (response.data as { personalDetails: string })["personalDetails"];
-    //       let details = JSON.parse(decryptData(personalDetails, "profile"));
-    //       setDetails(details);
-    //       console.log("details", details);
-    //     }
-    //   } else {
-    //     navigate("/");
-    //   }
-    // };
-    // getProfile();
-  }, [navigate]);
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role === "patient") {
+          navigate("/");
+        } else if (response.data.role === "doctor") {
+          // let personalDetails = (response.data as { personalDetails: string })["personalDetails"];
+          // let details = JSON.parse(decryptData(personalDetails, "profile"));
+          setDetails(JSON.parse(response.data.userInfo));
+          // console.log("details", details);
+        }
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   return (
     <>
@@ -94,6 +96,7 @@ const Profile = () => {
               </Col>
               <Col className="ml-2">
                 <div>{details?.fullName}</div>
+                <div className="font-normal">{account?.address}</div>
                 {/* <div className="font-normal">{wallet?.publicKey.toBase58()}</div> */}
               </Col>
             </Row>
@@ -140,11 +143,15 @@ const Profile = () => {
       >
         <div id="myqrcode" className="flex flex-col justify-center items-center mt-4">
           {/* <QRCode type={renderType} bgColor="#fff" value={wallet?.publicKey.toBase58()} /> */}
+          {account?.address && (
+            <QRCode type={renderType} bgColor="#fff" value={account.address} />
+          )}
           <Button type="primary" className="mt-4" onClick={downloadQRCode}>
             Download
           </Button>
           <span className="mt-4 text-center">
             <p className="text-sm font-semibold">Your Wallet Address</p>
+            <p className="text-xs">{account?.address}</p>
             {/* <p className="text-xs">{wallet?.publicKey.toBase58()}</p> */}
           </span>
         </div>

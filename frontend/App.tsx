@@ -16,6 +16,7 @@ import { WalletSelector } from "./components/WalletSelector.tsx";
 import {
   HomePage,
   PurchaseRecord,
+  Collection,
   Authorization,
   MedicalRecords,
   Medications,
@@ -30,6 +31,7 @@ import {
   RewardPage,
 } from "./pages/index.tsx";
 import Test from "./pages/test";
+import { ConnectWallet } from "@thirdweb-dev/react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -95,7 +97,11 @@ function App() {
                 onClick={() => setCollapsed(!collapsed)}
               />
               <DateTime />
-              <WalletSelector />
+              {/* Aptos Wallet */}
+              {/* <WalletSelector /> */}
+
+              {/* Sepolia and Scroll Wallet */}
+              <ConnectWallet />
             </Header>
 
             <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
@@ -106,6 +112,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/purchaseRecord" element={<PurchaseRecord />} />
+                  <Route path="/collection" element={<Collection />} />
                   <Route path="/authorization" element={<Authorization />} />
                   <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />

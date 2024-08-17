@@ -61,13 +61,26 @@ const revokePatient = async (patientAddress: string) => {
   }
 };
 
-const fetchAuthDoctor = async () => {
+const fetchAuthDoctor = async (address: any) => {
   try {
-    return { status: "success", data: "accountData" };
+    let response = await axios.get(`http://localhost:4000/doctor/${address}`);
+
+    if (response.statusText === "OK") {
+      return { status: "success", data: response.data };
+    } else {
+      return { status: "error", data: response.statusText };
+    }
+
   } catch (error) {
-    console.error("Error reading auth doctor:", error);
+    console.error("Error reading profile:", error);
     return { status: "error", data: error };
   }
+  // try {
+  //   return { status: "success", data: "accountData" };
+  // } catch (error) {
+  //   console.error("Error reading auth doctor:", error);
+  //   return { status: "error", data: error };
+  // }
 };
 
 const fetchAuthPatient = async () => {
