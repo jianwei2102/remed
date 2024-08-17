@@ -5,14 +5,15 @@ import { format } from "date-fns";
 import { FaInfo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useStorageUpload } from "@thirdweb-dev/react";
-import { Button, Form, Input, Select, DatePicker, Row, Col, message, Image, Avatar, Tooltip } from "antd";
+import { Button, Form, Input, Select, DatePicker, Row, Col, message, Image, Avatar, Tooltip, Spin } from "antd";
 import { creatMaschainWallet } from "@/lib/maschain";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { aptos, moduleAddress } from "@/utils/aptos";
 
 const PatientRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { account, connected } = useWallet();
+  const { account, signAndSubmitTransaction } = useWallet();
   const { mutateAsync: upload } = useStorageUpload();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -20,6 +21,7 @@ const PatientRegister = () => {
   const [nokFileUrl, setNokFileUrl] = useState<string | undefined>();
   const [patientFile, setPatientFile] = useState<File | undefined>();
   const [patientFileUrl, setPatientFileUrl] = useState<string | undefined>();
+  const [transactionInProgress, setTransactionInProgress] = useState<boolean>(false);
 
   const uploadToIpfs = async (file: File) => {
     try {
@@ -49,12 +51,10 @@ const PatientRegister = () => {
       },
       nextOfKin: {
         ...values.nextOfKin,
-        dateOfBirth: format(
-          new Date(values.nextOfKin.dateOfBirth),
-          "dd-MM-yyyy"
-        ),
+        dateOfBirth: format(new Date(values.nextOfKin.dateOfBirth), "dd-MM-yyyy"),
       },
     };
+    setTransactionInProgress(true);
 
     const maschainWalletData = {
       name: formattedValues.patient.name,
@@ -81,6 +81,26 @@ const PatientRegister = () => {
       console.log("Received values of form: ", formattedValues);
     } catch (error) {
       console.error("Error uploading file(s) to IPFS:", error);
+    }
+
+    // Remed Contract - Aptos
+    if (import.meta.env.VITE_APP_BlockChain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::patient_initialize`,
+          functionArguments: [],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+        // setAccountHasList(true);
+      } catch (error) {
+        // setAccountHasList(false);
+        console.log("error", error);
+      }
     }
 
     // Maschain Wallet Creation
@@ -128,7 +148,6 @@ const PatientRegister = () => {
           content: "Error creating user profile",
         });
       }
-
     } catch (error) {
       console.error("Error adding information to database:", error);
     }
@@ -405,9 +424,11 @@ const PatientRegister = () => {
       </Row>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="px-8 py-4 mt-4 text-lg">
-          Create Profile
-        </Button>
+        <Spin spinning={transactionInProgress}>
+          <Button type="primary" htmlType="submit" className="px-8 py-4 mt-4 text-lg">
+            Create Profile
+          </Button>
+        </Spin>
       </Form.Item>
     </Form>
   );

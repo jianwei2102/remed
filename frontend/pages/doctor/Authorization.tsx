@@ -4,21 +4,11 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import {
-  PatientAuthorized,
-  QRReader,
-  PatientRequested,
-} from "../../components";
-import {
-  Button,
-  Divider,
-  Flex,
-  Input,
-  message,
-  Modal,
-  Segmented,
-  Space,
-} from "antd";
+import { PatientAuthorized, QRReader, PatientRequested } from "../../components";
+import { Button, Divider, Flex, Input, message, Modal, Segmented, Space } from "antd";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEthContractContext } from "@/context/sepoliaContract";
+import { fetchProfile } from "@/utils/util";
 
 interface AuthorizedPatient {
   address: string;
@@ -43,6 +33,9 @@ const Authorization = () => {
   const [authorized, setAuthorized] = useState<AuthorizedPatient[]>([]);
   const [segmentedValue, setSegmentedValue] = useState<string>("View All");
 
+  const { account } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+
   const getAuthPatient = useCallback(async () => {
     // if (connection && wallet) {
     //   let response = await fetchAuthPatient(connection, wallet);
@@ -54,7 +47,6 @@ const Authorization = () => {
     //     );
     //   }
     // }
-
     // try {
     //   const response = await axios.get("http://localhost:4000/doctorRequests");
     //   const requests = response.data
@@ -75,23 +67,36 @@ const Authorization = () => {
   }, []);
 
   const checkAuthority = useCallback(async () => {
-    // if (!connection || !wallet) {
-    //   navigate("/");
-    //   return;
-    // }
+    let blockchain = import.meta.env.VITE_APP_BlockChain;
+    let wallet: any = null;
+    console.log(blockchain);
+    if (blockchain === "Ethereum") {
+      wallet = connectedAddress;
+    } else if (blockchain === "Aptos") {
+      wallet = account?.address;
+    } else {
+      navigate("/");
+    }
 
-    // let response = await fetchProfile(connection, wallet);
-    // if (response.status === "success") {
-    //   const role = (response.data as { role: string }).role;
-    //   if (role === "patient") {
-    //     navigate("/");
-    //   } else if (role === "doctor") {
-    //     getAuthPatient();
-    //   }
-    // } else {
-    //   navigate("/");
-    // }
-  }, [ navigate, getAuthPatient]);
+    let response = await fetchProfile(wallet);
+    console.log(response);
+
+    if (response.status === "success") {
+      if (response.data === null) {
+        navigate("/");
+      }
+
+      if (response.data.role === "patient") {
+        navigate("/");
+      } else if (response.data.role === "doctor") {
+        getAuthPatient();
+      } else if (response.data.role === "researcher") {
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
+  }, [navigate, getAuthPatient]);
 
   const checkPatientRole = async (patientAddress: string) => {
     // const isAuthorized = authorized.some(
@@ -191,9 +196,7 @@ const Authorization = () => {
   };
 
   const revokePatientCallback = (patientAddress: string) => {
-    setAuthorized((prev) =>
-      prev.filter((item) => item.address !== patientAddress)
-    );
+    setAuthorized((prev) => prev.filter((item) => item.address !== patientAddress));
     messageApi.open({
       type: "success",
       content: "Patient revoked successfully",
@@ -230,9 +233,7 @@ const Authorization = () => {
               {filteredAuthorized.map((item, index) => (
                 <PatientAuthorized
                   key={index}
-                  patientDetails={
-                    item as unknown as { address: string; date: string }
-                  }
+                  patientDetails={item as unknown as { address: string; date: string }}
                   revokePatientCallback={revokePatientCallback}
                 />
               ))}
@@ -242,20 +243,13 @@ const Authorization = () => {
             <>
               <div className="text-lg font-semibold">Pending Requests</div>
               {filteredRequested.map((item) => (
-                <PatientRequested
-                  key={item.id}
-                  patientDetails={item}
-                  revokePatientCallback={revokeRequestCallback}
-                />
+                <PatientRequested key={item.id} patientDetails={item} revokePatientCallback={revokeRequestCallback} />
               ))}
             </>
           )}
-          {filteredAuthorized.length === 0 &&
-            filteredRequested.length === 0 && (
-              <div className="text-center py-4 text-lg text-gray-500">
-                No patients
-              </div>
-            )}
+          {filteredAuthorized.length === 0 && filteredRequested.length === 0 && (
+            <div className="text-center py-4 text-lg text-gray-500">No patients</div>
+          )}
         </>
       );
     }
@@ -265,32 +259,22 @@ const Authorization = () => {
         filteredAuthorized.map((item, index) => (
           <PatientAuthorized
             key={index}
-            patientDetails={
-              item as unknown as { address: string; date: string }
-            }
+            patientDetails={item as unknown as { address: string; date: string }}
             revokePatientCallback={revokePatientCallback}
           />
         ))
       ) : (
-        <div className="text-center py-4 text-lg text-gray-500">
-          No authorized patients
-        </div>
+        <div className="text-center py-4 text-lg text-gray-500">No authorized patients</div>
       );
     }
 
     if (segmentedValue === "Pending") {
       return filteredRequested.length > 0 ? (
         filteredRequested.map((item) => (
-          <PatientRequested
-            key={item.id}
-            patientDetails={item}
-            revokePatientCallback={revokeRequestCallback}
-          />
+          <PatientRequested key={item.id} patientDetails={item} revokePatientCallback={revokeRequestCallback} />
         ))
       ) : (
-        <div className="text-center py-4 text-lg text-gray-500">
-          No pending requests
-        </div>
+        <div className="text-center py-4 text-lg text-gray-500">No pending requests</div>
       );
     }
 
@@ -298,11 +282,11 @@ const Authorization = () => {
   };
 
   const filteredAuthorized = authorized.filter((patient) =>
-    patient.address.toLowerCase().includes(searchQuery.toLowerCase())
+    patient.address.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const filteredRequested = requested.filter((patient) =>
-    patient.address.toLowerCase().includes(searchQuery.toLowerCase())
+    patient.address.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -311,10 +295,7 @@ const Authorization = () => {
       <Space className="flex justify-between">
         <Flex vertical>
           <span className="font-semibold text-xl">Authorized Patients</span>
-          <span className="text-lg">
-            Ensure your patients are authorized to access and append their
-            records.
-          </span>
+          <span className="text-lg">Ensure your patients are authorized to access and append their records.</span>
         </Flex>
 
         <Button type="primary" size="large" onClick={() => setOpen(true)}>
@@ -328,17 +309,10 @@ const Authorization = () => {
           confirmLoading={confirmLoading}
           onCancel={() => setOpen(false)}
         >
-          <Input
-            placeholder="0x...123"
-            value={patientAddress}
-            onChange={(e) => setPatientAddress(e.target.value)}
-          />
-          <div className="text-sm text-gray-500 pt-2">
-            Note: Ensure the address belongs to a registered patient.
-          </div>
+          <Input placeholder="0x...123" value={patientAddress} onChange={(e) => setPatientAddress(e.target.value)} />
+          <div className="text-sm text-gray-500 pt-2">Note: Ensure the address belongs to a registered patient.</div>
           <Divider />
-          <QRReader onScanSuccess={handleScanSuccess} />{" "}
-          {/* Pass the callback prop */}
+          <QRReader onScanSuccess={handleScanSuccess} /> {/* Pass the callback prop */}
         </Modal>
       </Space>
 
@@ -355,10 +329,7 @@ const Authorization = () => {
       </div>
 
       <Space className="flex justify-between items-center mb-4" size="middle">
-        <Segmented
-          options={["View All", "Authorized", "Pending"]}
-          onChange={(value) => setSegmentedValue(value)}
-        />
+        <Segmented options={["View All", "Authorized", "Pending"]} onChange={(value) => setSegmentedValue(value)} />
         <Flex gap="small">
           <Input
             placeholder="Search"

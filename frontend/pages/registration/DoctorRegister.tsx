@@ -17,13 +17,12 @@ const DoctorRegister = () => {
   // const { connection } = useConnection();
   // const wallet = useAnchorWallet() as Wallet;
   const { mutateAsync: upload } = useStorageUpload();
-  const { account, connected, signAndSubmitTransaction } = useWallet();
+  const { account, signAndSubmitTransaction } = useWallet();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
   const [transactionInProgress, setTransactionInProgress] = useState<boolean>(false);
-
 
   const uploadToIpfs = async (file: File) => {
     try {
@@ -71,21 +70,24 @@ const DoctorRegister = () => {
       console.error("Error uploading file(s) to IPFS:", error);
     }
 
-    const transaction: InputTransactionData = {
-      data: {
-        function: `${moduleAddress}::remed::creating_auth_list`,
-        functionArguments: [],
-      },
-    };
-    try {
-      // sign and submit transaction to chain
-      const response = await signAndSubmitTransaction(transaction);
-      // wait for transaction
-      await aptos.waitForTransaction({ transactionHash: response.hash });
-      // setAccountHasList(true);
-    } catch (error) {
-      // setAccountHasList(false);
-      console.log("error", error);
+    // Auth list - aptos
+    if (import.meta.env.VITE_APP_BlockChain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::creating_auth_list`,
+          functionArguments: [],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+        // setAccountHasList(true);
+      } catch (error) {
+        // setAccountHasList(false);
+        console.log("error", error);
+      }
     }
 
     // Add Info to DB
