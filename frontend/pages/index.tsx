@@ -12,6 +12,7 @@ export { default as LabResults } from "./patient/LabResults.tsx";
 export { default as Medications } from "./patient/Medications.tsx";
 export { default as Profile } from "./patient/Profile.tsx";
 export { default as MedicalRecords } from "./patient/MedicalRecords.tsx";
+export { default as RewardPage } from "./patient/RewardPage.tsx";
 
 export { default as DoctorDashboard } from "./doctor/DoctorDashboard.tsx";
 export { default as DoctorAuthorization } from "./doctor/Authorization.tsx";
