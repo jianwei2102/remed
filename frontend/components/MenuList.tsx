@@ -11,6 +11,7 @@ import React, { useEffect, useState, useMemo } from "react";
 // import { MdOutlineNotificationsActive } from "react-icons/md";
 import { PiUserCheck, PiTestTubeDuotone } from "react-icons/pi";
 import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai";
+import { AiFillGift, AiOutlineGift } from "react-icons/ai";
 
 interface MenuListProps {
   darkTheme: boolean;
@@ -43,6 +44,12 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
         icon: <PiUserCheck size={18} />,
         label: "Purchase Record",
         onClick: () => navigate("/purchaseRecord"),
+      },
+      {
+        key: "/rewards",
+        icon: <AiOutlineGift size={18} />,
+        label: "Rewards",
+        onClick: () => navigate("/rewards"),
       },
     ],
     [navigate],

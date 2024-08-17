@@ -27,6 +27,7 @@ import {
   Settings,
   ViewRecord,
   ModifyRecord,
+  RewardPage,
 } from "./pages/index.tsx";
 import Test from "./pages/test";
 
@@ -118,7 +119,7 @@ function App() {
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
                   <Route path="/doctor/profile" element={<DoctorProfile />} />
-                  <Route path="/researcher/purchaseRecord" element={<PurchaseRecord />} />
+                  <Route path="/rewards" element={<RewardPage />} />
                 </Routes>
               </div>
             </Content>
