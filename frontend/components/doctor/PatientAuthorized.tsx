@@ -112,7 +112,7 @@ const PatientAuthorized = ({ patientDetails, revokePatientCallback }: PatientAut
             icon={
               profile?.patient ? (
                 <Image
-                  src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
+                  src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
                   alt="Avatar Image"
                 />
               ) : undefined
@@ -165,7 +165,7 @@ const PatientAuthorized = ({ patientDetails, revokePatientCallback }: PatientAut
                 size={32}
                 icon={
                   <Image
-                    src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
+                    src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
                     alt="Avatar Image"
                   />
                 }
@@ -213,7 +213,7 @@ const PatientAuthorized = ({ patientDetails, revokePatientCallback }: PatientAut
                 size={32}
                 icon={
                   <Image
-                    src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.nextOfKin.image}/`}
+                    src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.nextOfKin.image}/`}
                     alt="Avatar Image"
                   />
                 }

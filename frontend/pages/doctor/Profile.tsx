@@ -86,7 +86,7 @@ const Profile = () => {
                   size={48}
                   icon={
                     <Image
-                      src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.image}/`}
+                      src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.image}/`}
                       alt="Profile Image"
                     />
                   }

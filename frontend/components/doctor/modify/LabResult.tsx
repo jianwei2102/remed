@@ -54,7 +54,7 @@ const LabResult = () => {
         initialData.xrayImages?.map((cid: string) => ({
           uid: cid,
           name: `${cid}.jpg`, // Customize this based on the file extension
-          url: `https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${cid}/`,
+          url: `https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${cid}/`,
         })) || [];
       setFileList(initialFileList);
     }

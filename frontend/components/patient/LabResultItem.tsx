@@ -86,15 +86,11 @@ const LabResultItem = ({ record, sameDoctor }: LabResultItemProps) => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">Hematocrit (HCT)</div>
-                  <div className="col-span-1">
-                    : {parsedRecord.hematocrit} %
-                  </div>
+                  <div className="col-span-1">: {parsedRecord.hematocrit} %</div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">Hemoglobin (HGB)</div>
-                  <div className="col-span-1">
-                    : {parsedRecord.hemoglobin} g/dL
-                  </div>
+                  <div className="col-span-1">: {parsedRecord.hemoglobin} g/dL</div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">Platelets</div>
@@ -138,12 +134,9 @@ const LabResultItem = ({ record, sameDoctor }: LabResultItemProps) => {
             children: (
               <div className="flex gap-4">
                 {parsedRecord.xrayImages.map((image: string, index: number) => (
-                  <div
-                    key={index}
-                    className="flex flex-col justify-center items-center"
-                  >
+                  <div key={index} className="flex flex-col justify-center items-center">
                     <Image
-                      src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${image}/`}
+                      src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${image}/`}
                       alt="X-Ray Image"
                       width={200}
                       height={200}
@@ -152,7 +145,7 @@ const LabResultItem = ({ record, sameDoctor }: LabResultItemProps) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       // href={`https://gateway.ipfs.io/ipfs/${image}`}
-                      href={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${image}/`}
+                      href={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${image}/`}
                       className="ml-4 text-blue-800 hover:underline"
                     >
                       {`Image ${index + 1}`}
@@ -173,9 +166,7 @@ const LabResultItem = ({ record, sameDoctor }: LabResultItemProps) => {
       <div className="grid grid-cols-4">
         <div className="flex col-span-3">
           <p className="font-semibold">{type}: </p>
-          <p className="truncate pl-4">
-            {`${parsedRecord.location}, ${parsedRecord.date}, ${parsedRecord.time}`}
-          </p>
+          <p className="truncate pl-4">{`${parsedRecord.location}, ${parsedRecord.date}, ${parsedRecord.time}`}</p>
         </div>
         <div className="flex flex-row-reverse row-span-2">
           {sameDoctor && (
@@ -203,66 +194,52 @@ const LabResultItem = ({ record, sameDoctor }: LabResultItemProps) => {
             <div className="text-[#FC5488]">
               {parsedRecord.hemoglobin < referenceRanges.hemoglobin.min && (
                 <div>
-                  Hemoglobin is <span className="font-semibold"> below </span>{" "}
-                  the normal range.
+                  Hemoglobin is <span className="font-semibold"> below </span> the normal range.
                 </div>
               )}
               {parsedRecord.hemoglobin > referenceRanges.hemoglobin.max && (
                 <div>
-                  Hemoglobin is <span className="font-semibold"> above </span>{" "}
-                  the normal range.
+                  Hemoglobin is <span className="font-semibold"> above </span> the normal range.
                 </div>
               )}
-              {parsedRecord.whiteBloodCells <
-                referenceRanges.whiteBloodCells.min && (
+              {parsedRecord.whiteBloodCells < referenceRanges.whiteBloodCells.min && (
                 <div>
-                  WBC is <span className="font-semibold"> below </span> the
-                  normal range.
+                  WBC is <span className="font-semibold"> below </span> the normal range.
                 </div>
               )}
-              {parsedRecord.whiteBloodCells >
-                referenceRanges.whiteBloodCells.max && (
+              {parsedRecord.whiteBloodCells > referenceRanges.whiteBloodCells.max && (
                 <div>
-                  WBC is <span className="font-semibold"> above </span> the
-                  normal range.
+                  WBC is <span className="font-semibold"> above </span> the normal range.
                 </div>
               )}
-              {parsedRecord.redBloodCells <
-                referenceRanges.redBloodCells.min && (
+              {parsedRecord.redBloodCells < referenceRanges.redBloodCells.min && (
                 <div>
-                  RBC is <span className="font-semibold"> below </span> the
-                  normal range.
+                  RBC is <span className="font-semibold"> below </span> the normal range.
                 </div>
               )}
-              {parsedRecord.redBloodCells >
-                referenceRanges.redBloodCells.max && (
+              {parsedRecord.redBloodCells > referenceRanges.redBloodCells.max && (
                 <div>
-                  RBC is <span className="font-semibold"> above </span> the
-                  normal range.
+                  RBC is <span className="font-semibold"> above </span> the normal range.
                 </div>
               )}
               {parsedRecord.hematocrit < referenceRanges.hematocrit.min && (
                 <div>
-                  Hematocrit is <span className="font-semibold"> below </span>{" "}
-                  the normal range.
+                  Hematocrit is <span className="font-semibold"> below </span> the normal range.
                 </div>
               )}
               {parsedRecord.hematocrit > referenceRanges.hematocrit.max && (
                 <div>
-                  Hematocrit is <span className="font-semibold"> above </span>{" "}
-                  the normal range.
+                  Hematocrit is <span className="font-semibold"> above </span> the normal range.
                 </div>
               )}
               {parsedRecord.platelets < referenceRanges.platelets.min && (
                 <div>
-                  Platelets are <span className="font-semibold"> below </span>{" "}
-                  the normal range.
+                  Platelets are <span className="font-semibold"> below </span> the normal range.
                 </div>
               )}
               {parsedRecord.platelets > referenceRanges.platelets.max && (
                 <div>
-                  Platelets are <span className="font-semibold"> above </span>{" "}
-                  the normal range.
+                  Platelets are <span className="font-semibold"> above </span> the normal range.
                 </div>
               )}
             </div>

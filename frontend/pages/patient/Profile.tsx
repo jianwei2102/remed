@@ -33,8 +33,6 @@ interface ProfileDetails {
 const Profile = () => {
   const navigate = useNavigate();
 
-  const wallet = useAnchorWallet() as Wallet;
-
   const [details, setDetails] = useState<ProfileDetails | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [renderType] = useState<QRCodeProps["type"]>("canvas");
@@ -68,30 +66,29 @@ const Profile = () => {
 
   useEffect(() => {
     const getProfile = async () => {
-      if (!connection || !wallet) {
-        console.log("Connection or wallet not found!");
-        navigate("/");
-        return;
-      }
-
-      let response = await fetchProfile(connection, wallet);
-      if (response.status === "success") {
-        const role = (response.data as { role: string }).role;
-        if (role === "patient") {
-          let personalDetails = (response.data as { personalDetails: string })["personalDetails"];
-          let details = JSON.parse(decryptData(personalDetails, "profile"));
-          setDetails(details);
-          console.log("details", details);
-        } else if (role === "doctor") {
-          navigate("/");
-        }
-      } else {
-        navigate("/");
-      }
+      // if (!connection || !wallet) {
+      //   console.log("Connection or wallet not found!");
+      //   navigate("/");
+      //   return;
+      // }
+      // let response = await fetchProfile(connection, wallet);
+      // if (response.status === "success") {
+      //   const role = (response.data as { role: string }).role;
+      //   if (role === "patient") {
+      //     let personalDetails = (response.data as { personalDetails: string })["personalDetails"];
+      //     let details = JSON.parse(decryptData(personalDetails, "profile"));
+      //     setDetails(details);
+      //     console.log("details", details);
+      //   } else if (role === "doctor") {
+      //     navigate("/");
+      //   }
+      // } else {
+      //   navigate("/");
+      // }
     };
 
     getProfile();
-  }, [connection, wallet, navigate]);
+  }, [navigate]);
 
   return (
     <>
@@ -104,7 +101,7 @@ const Profile = () => {
                   size={48}
                   icon={
                     <Image
-                      src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.patient.image}/`}
+                      src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.patient.image}/`}
                       alt="Avatar Image"
                     />
                   }
@@ -112,7 +109,7 @@ const Profile = () => {
               </Col>
               <Col className="ml-2">
                 <div>{details?.patient.name}</div>
-                <div className="font-normal">{wallet?.publicKey.toBase58()}</div>
+                {/* <div className="font-normal">{wallet?.publicKey.toBase58()}</div> */}
               </Col>
             </Row>
           }
@@ -139,7 +136,7 @@ const Profile = () => {
                   size={48}
                   icon={
                     <Image
-                      src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.nextOfKin.image}/`}
+                      src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${details?.nextOfKin.image}/`}
                       alt="Avatar Image"
                     />
                   }
@@ -173,13 +170,13 @@ const Profile = () => {
         centered
       >
         <div id="myqrcode" className="flex flex-col justify-center items-center mt-4">
-          <QRCode type={renderType} bgColor="#fff" value={wallet?.publicKey.toBase58()} />
+          {/* <QRCode type={renderType} bgColor="#fff" value={wallet?.publicKey.toBase58()} /> */}
           <Button type="primary" className="mt-4" onClick={downloadQRCode}>
             Download
           </Button>
           <span className="mt-4 text-center">
             <p className="text-sm font-semibold">Your Wallet Address</p>
-            <p className="text-xs">{wallet?.publicKey.toBase58()}</p>
+            {/* <p className="text-xs">{wallet?.publicKey.toBase58()}</p> */}
           </span>
         </div>
       </Modal>

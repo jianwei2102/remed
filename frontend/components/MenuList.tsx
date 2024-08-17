@@ -28,6 +28,8 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
   const defaultItem = useMemo(
     () => [
       {
@@ -39,8 +41,6 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
     ],
     [navigate],
   );
-
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(defaultItem);
 
   const patientItems: MenuItem[] = useMemo(() => {
     type CustomIconComponentProps = GetProps<typeof Icon>;
@@ -159,28 +159,29 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
     ];
   }, [navigate, location.pathname]);
 
-  // useEffect(() => {
-  //   if (wallet && connection) {
-  //     fetchProfile(connection, wallet as Wallet).then((data) => {
-  //       if (data.status === "success") {
-  //         let personalDetails = (data.data as { personalDetails: string })["personalDetails"];
-  //         if ((data.data as { role: string })["role"] === "patient") {
-  //           sessionStorage.setItem("name", JSON.parse(decryptData(personalDetails, "profile")).patient.name);
-  //           sessionStorage.setItem("role", "patient");
-  //           setMenuItems(patientItems);
-  //         } else if ((data.data as { role: string })["role"] === "doctor") {
-  //           const doctorDetails = JSON.parse(decryptData(personalDetails, "profile"));
-  //           sessionStorage.setItem("name", doctorDetails.fullName);
-  //           sessionStorage.setItem("affiliations", doctorDetails.affiliations);
-  //           sessionStorage.setItem("role", "doctor");
-  //           setMenuItems(doctorItems);
-  //         }
-  //       }
-  //     });
-  //   } else {
-  //     setMenuItems(defaultItem);
-  //   }
-  // }, [wallet, connection, defaultItem, patientItems, doctorItems]);
+  useEffect(() => {
+    setMenuItems(defaultItem);
+    // if (wallet && connection) {
+    //   fetchProfile(connection, wallet as Wallet).then((data) => {
+    //     if (data.status === "success") {
+    //       let personalDetails = (data.data as { personalDetails: string })["personalDetails"];
+    //       if ((data.data as { role: string })["role"] === "patient") {
+    //         sessionStorage.setItem("name", JSON.parse(decryptData(personalDetails, "profile")).patient.name);
+    //         sessionStorage.setItem("role", "patient");
+    //         setMenuItems(patientItems);
+    //       } else if ((data.data as { role: string })["role"] === "doctor") {
+    //         const doctorDetails = JSON.parse(decryptData(personalDetails, "profile"));
+    //         sessionStorage.setItem("name", doctorDetails.fullName);
+    //         sessionStorage.setItem("affiliations", doctorDetails.affiliations);
+    //         sessionStorage.setItem("role", "doctor");
+    //         setMenuItems(doctorItems);
+    //       }
+    //     }
+    //   });
+    // } else {
+    //   setMenuItems(defaultItem);
+    // }
+  }, [defaultItem, patientItems, doctorItems]);
 
   return (
     <Menu

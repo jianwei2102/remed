@@ -103,7 +103,7 @@ function App() {
               >
                 <Routes>
                   <Route path="/" element={<HomePage />} />
-                  {/* <Route path="/authorization" element={<Authorization />} />
+                  <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
                   <Route path="/labResults" element={<LabResults />} />
@@ -116,7 +116,7 @@ function App() {
                   <Route path="/doctor/viewRecord" element={<ViewRecord />} />
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
-                   <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
+                  <Route path="/doctor/profile" element={<DoctorProfile />} />
                 </Routes>
               </div>
             </Content>
