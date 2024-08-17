@@ -3,14 +3,14 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
-import { createProfile } from "../../utils/util.ts";
+import { createProfile } from "../../utils/util";
 import { useStorageUpload } from "@thirdweb-dev/react";
 
 import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image } from "antd";
 
 const { Option } = Select;
 
-const DoctorRegister = () => {
+const ResearcherRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   // const { connection } = useConnection();
@@ -344,4 +344,4 @@ const DoctorRegister = () => {
   );
 };
 
-export default DoctorRegister;
+export default ResearcherRegister;
