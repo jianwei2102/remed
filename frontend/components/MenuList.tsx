@@ -5,7 +5,7 @@ import { CgPill } from "react-icons/cg";
 import { FiFileText } from "react-icons/fi";
 import { AiOutlineUser } from "react-icons/ai";
 import { LiaFileMedicalAltSolid } from "react-icons/lia";
-// import { fetchProfile, decryptData } from "../utils/util";
+// import { fetchProfile, decryptData } from "../utils/util.ts";
 import { useNavigate, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useMemo } from "react";
 // import { MdOutlineNotificationsActive } from "react-icons/md";

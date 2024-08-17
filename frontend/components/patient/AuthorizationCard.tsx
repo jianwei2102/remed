@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Col, Row, Button, message, Drawer, Divider } from "antd";
-import { decryptData, fetchProfile, revokeDoctor } from "../../utils/util";
+import { decryptData, fetchProfile, revokeDoctor } from "../../utils/util.ts";
 
 interface AuthorizationCardProps {
   doctorDetails: { address: string; date: string };
@@ -36,8 +36,6 @@ const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
 );
 
 const AuthorizationCard = ({ doctorDetails, revokeDoctorCallback }: AuthorizationCardProps) => {
-  const wallet = useAnchorWallet();
-  const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [open, setOpen] = useState(false);
@@ -52,40 +50,37 @@ const AuthorizationCard = ({ doctorDetails, revokeDoctorCallback }: Authorizatio
   };
 
   useEffect(() => {
-    const getProfile = async () => {
-      const publicKey = new web3.PublicKey(doctorDetails.address);
-      const doctorWallet = { publicKey };
-      let response = await fetchProfile(connection, doctorWallet as Wallet);
-      if (response.status === "success") {
-        const decryptedProfile = decryptData(
-          (response.data as { personalDetails: string })["personalDetails"],
-          "profile",
-        );
-        setProfile(JSON.parse(decryptedProfile));
-      }
-    };
-
-    getProfile();
-  }, [connection, doctorDetails]);
+    // const getProfile = async () => {
+    //   const publicKey = new web3.PublicKey(doctorDetails.address);
+    //   const doctorWallet = { publicKey };
+    //   let response = await fetchProfile(connection, doctorWallet as Wallet);
+    //   if (response.status === "success") {
+    //     const decryptedProfile = decryptData(
+    //       (response.data as { personalDetails: string })["personalDetails"],
+    //       "profile",
+    //     );
+    //     setProfile(JSON.parse(decryptedProfile));
+    //   }
+    // };
+    // getProfile();
+  }, [doctorDetails]);
 
   const revokeDoc = async (doctorAddress: string) => {
-    messageApi.open({
-      type: "loading",
-      content: "Transaction in progress..",
-      duration: 0,
-    });
-
-    let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
-    messageApi.destroy();
-
-    if (response.status === "success") {
-      revokeDoctorCallback(doctorAddress);
-    } else {
-      messageApi.open({
-        type: "error",
-        content: "Error revoking doctor profile",
-      });
-    }
+    // messageApi.open({
+    //   type: "loading",
+    //   content: "Transaction in progress..",
+    //   duration: 0,
+    // });
+    // let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
+    // messageApi.destroy();
+    // if (response.status === "success") {
+    //   revokeDoctorCallback(doctorAddress);
+    // } else {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "Error revoking doctor profile",
+    //   });
+    // }
   };
 
   return (

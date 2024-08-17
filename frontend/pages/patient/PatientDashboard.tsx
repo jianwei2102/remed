@@ -7,7 +7,7 @@ import { MdOutlinePeopleAlt } from "react-icons/md";
 import img from "../../assets/patientDashboard.png";
 import { AuthorizationCard, MedicationCard } from "../../components/";
 
-import { decryptData, fetchAuthDoctor, fetchRecord, processRecords } from "../../utils/util";
+import { decryptData, fetchAuthDoctor, fetchRecord, processRecords } from "../../utils/util.ts";
 
 interface AuthorizedDoctor {
   address: string;

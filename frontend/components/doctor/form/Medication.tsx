@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { format } from "date-fns";
 
 import { useLocation } from "react-router-dom";
-import { appendRecord, generateHash } from "../../../utils/util";
+import { appendRecord, generateHash } from "../../../utils/util.ts";
 
 import { Button, Collapse, Form, Input, message, Select, InputNumber } from "antd";
 
@@ -11,8 +11,6 @@ const { Panel } = Collapse;
 const Medication = () => {
   const [form] = Form.useForm();
   const location = useLocation();
-  const { connection } = useConnection();
-  const wallet = useAnchorWallet() as Wallet;
   const [messageApi, contextHolder] = message.useMessage();
 
   const patientName = location.state?.name;
@@ -27,54 +25,48 @@ const Medication = () => {
   };
 
   const onFinish = async (values: any) => {
-    if (!values.medications || values.medications.length === 0) {
-      messageApi.open({
-        type: "error",
-        content: "Please add new medications!",
-      });
-      return;
-    }
-
-    const record = {
-      ...values,
-      date: format(dayjs().toDate(), "dd-MM-yyyy"),
-      time: format(dayjs().toDate(), "hh:mm a"),
-      location: sessionStorage.getItem("affiliations")?.toString(),
-    };
-
-    const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
-    console.log(record, recordHash);
-
-    messageApi.open({
-      type: "loading",
-      content: "Transaction in progress..",
-      duration: 0,
-    });
-
-    let response = await appendRecord(
-      connection,
-      wallet,
-      recordHash,
-      JSON.stringify(record),
-      patientAddress,
-      "medication",
-    );
-
-    messageApi.destroy();
-    if (response.status === "success") {
-      // Reset the form fields to their initial state
-      form.resetFields();
-
-      messageApi.open({
-        type: "success",
-        content: "Record created successfully!",
-      });
-    } else {
-      messageApi.open({
-        type: "error",
-        content: "Error creating record!",
-      });
-    }
+    // if (!values.medications || values.medications.length === 0) {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "Please add new medications!",
+    //   });
+    //   return;
+    // }
+    // const record = {
+    //   ...values,
+    //   date: format(dayjs().toDate(), "dd-MM-yyyy"),
+    //   time: format(dayjs().toDate(), "hh:mm a"),
+    //   location: sessionStorage.getItem("affiliations")?.toString(),
+    // };
+    // const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
+    // console.log(record, recordHash);
+    // messageApi.open({
+    //   type: "loading",
+    //   content: "Transaction in progress..",
+    //   duration: 0,
+    // });
+    // let response = await appendRecord(
+    //   connection,
+    //   wallet,
+    //   recordHash,
+    //   JSON.stringify(record),
+    //   patientAddress,
+    //   "medication",
+    // );
+    // messageApi.destroy();
+    // if (response.status === "success") {
+    //   // Reset the form fields to their initial state
+    //   form.resetFields();
+    //   messageApi.open({
+    //     type: "success",
+    //     content: "Record created successfully!",
+    //   });
+    // } else {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "Error creating record!",
+    //   });
+    // }
   };
 
   const formItemLayout = { labelCol: { span: 3 }, wrapperCol: { span: 21 } };

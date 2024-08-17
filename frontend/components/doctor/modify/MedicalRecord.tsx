@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { format } from "date-fns";
 import { useLocation, useNavigate } from "react-router-dom";
-import { generateHash, modifyRecord } from "../../../utils/util";
+import { generateHash, modifyRecord } from "../../../utils/util.ts";
 import { Button, Card, DatePicker, Form, Input, message, Select, Space, TimePicker } from "antd";
 
 const MedicalRecord = () => {

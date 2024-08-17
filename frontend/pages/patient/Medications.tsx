@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { MedicationItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
 
-import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util";
+import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util.ts";
 
 const Medications = () => {
   const navigate = useNavigate();
-  const { connection } = useConnection();
+
   const wallet = useAnchorWallet() as Wallet;
 
   const [medications, setMedications] = useState<any[]>([]);

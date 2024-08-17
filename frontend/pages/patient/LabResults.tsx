@@ -1,8 +1,7 @@
-
 import { useNavigate } from "react-router-dom";
 import { LabResultItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
-import { decryptData, fetchProfile, fetchRecord } from "../../utils/util";
+import { decryptData, fetchProfile, fetchRecord } from "../../utils/util.ts";
 
 interface Record {
   recordHash: string;
@@ -31,12 +30,10 @@ const LabResults = () => {
     //       records: Record[];
     //     }
     //   ).records;
-
     //   // Filter records where recordType is "labResults"
     //   let filteredRecords = accountData.filter(
     //     (record) => record.recordType === "labResults"
     //   );
-
     //   // Decrypt recordDetails
     //   let decryptedRecords = filteredRecords
     //     .map((record) => ({
@@ -47,9 +44,7 @@ const LabResults = () => {
     //       patientName: "",
     //     }))
     //     .reverse();
-
     //   console.log(decryptedRecords);
-
     //   setLabResults(decryptedRecords);
     //   // console.log(medicalRecordsHash);
     // }
@@ -60,7 +55,6 @@ const LabResults = () => {
     //   navigate("/");
     //   return;
     // }
-
     // let response = await fetchProfile(connection, wallet);
     // if (response.status === "success") {
     //   const role = (response.data as { role: string }).role;
@@ -72,7 +66,7 @@ const LabResults = () => {
     // } else {
     //   navigate("/");
     // }
-  }, [ navigate, getLabResults]);
+  }, [navigate, getLabResults]);
 
   useEffect(() => {
     getProfile();
@@ -86,9 +80,7 @@ const LabResults = () => {
       ))}
 
       {labResults?.length === 0 && (
-        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">
-          No lab results found!
-        </div>
+        <div className="text-center py-4 text-lg text-gray-500 border rounded-xl">No lab results found!</div>
       )}
     </div>
   );

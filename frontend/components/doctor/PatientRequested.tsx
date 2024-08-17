@@ -1,7 +1,7 @@
 import { FaStar } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
-import { fetchProfile, decryptData } from "../../utils/util";
+import { fetchProfile, decryptData } from "../../utils/util.ts";
 import { Avatar, Button, Col, message, Row, Image } from "antd";
 
 interface Patient {
@@ -39,27 +39,25 @@ interface PatientRequestedProps {
 }
 
 const PatientRequested = ({ patientDetails, revokePatientCallback }: PatientRequestedProps) => {
-  const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [profile, setProfile] = useState<PatientProfile | undefined>();
 
   useEffect(() => {
-    const getProfile = async () => {
-      const publicKey = new web3.PublicKey(patientDetails.address);
-      const patientWallet = { publicKey };
-      let response = await fetchProfile(connection, patientWallet as Wallet);
-      if (response.status === "success") {
-        const decryptedProfile = decryptData(
-          (response.data as { personalDetails: string })["personalDetails"],
-          "profile",
-        );
-        setProfile(JSON.parse(decryptedProfile));
-      }
-    };
-
-    getProfile();
-  }, [connection, patientDetails]);
+    // const getProfile = async () => {
+    //   const publicKey = new web3.PublicKey(patientDetails.address);
+    //   const patientWallet = { publicKey };
+    //   let response = await fetchProfile(connection, patientWallet as Wallet);
+    //   if (response.status === "success") {
+    //     const decryptedProfile = decryptData(
+    //       (response.data as { personalDetails: string })["personalDetails"],
+    //       "profile",
+    //     );
+    //     setProfile(JSON.parse(decryptedProfile));
+    //   }
+    // };
+    // getProfile();
+  }, [patientDetails]);
 
   const revokePatientFunc = async () => {
     messageApi.open({

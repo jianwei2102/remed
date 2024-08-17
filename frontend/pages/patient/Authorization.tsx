@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import { DoctorAuthorized, QRReader, DoctorRequested } from "../../components";
-import { authorizeDoctor, fetchAuthDoctor, fetchProfile } from "../../utils/util";
+import { authorizeDoctor, fetchAuthDoctor, fetchProfile } from "../../utils/util.ts";
 import { Button, Divider, Flex, Input, Space, Segmented, Modal, message } from "antd";
 
 interface AuthorizedDoctor {

@@ -2,7 +2,7 @@ import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 import { Col, Row, Image, Button, message, Drawer, Divider } from "antd";
-import { fetchProfile, revokeDoctor, decryptData } from "../../utils/util";
+import { fetchProfile, revokeDoctor, decryptData } from "../../utils/util.ts";
 
 interface DoctorAuthorizedProps {
   doctorDetails: { address: string; date: string };
@@ -40,8 +40,6 @@ const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
 );
 
 const DoctorAuthorized = ({ doctorDetails, revokeDoctorCallback }: DoctorAuthorizedProps) => {
-  const wallet = useAnchorWallet();
-  const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [open, setOpen] = useState(false);
@@ -55,41 +53,41 @@ const DoctorAuthorized = ({ doctorDetails, revokeDoctorCallback }: DoctorAuthori
   };
 
   useEffect(() => {
-    const getProfile = async () => {
-      const publicKey = new web3.PublicKey(doctorDetails.address);
-      const doctorWallet = { publicKey };
-      let response = await fetchProfile(connection, doctorWallet as Wallet);
-      if (response.status === "success") {
-        const decryptedProfile = decryptData(
-          (response.data as { personalDetails: string })["personalDetails"],
-          "profile",
-        );
-        setProfile(JSON.parse(decryptedProfile));
-        // console.log(JSON.parse(decryptedProfile));
-      }
-    };
+    // const getProfile = async () => {
+    //   const publicKey = new web3.PublicKey(doctorDetails.address);
+    //   const doctorWallet = { publicKey };
+    //   let response = await fetchProfile(connection, doctorWallet as Wallet);
+    //   if (response.status === "success") {
+    //     const decryptedProfile = decryptData(
+    //       (response.data as { personalDetails: string })["personalDetails"],
+    //       "profile",
+    //     );
+    //     setProfile(JSON.parse(decryptedProfile));
+    //     // console.log(JSON.parse(decryptedProfile));
+    //   }
+    // };
 
-    getProfile();
-  }, [connection, doctorDetails]);
+    // getProfile();
+  }, [doctorDetails]);
 
   const revokeDoc = async (doctorAddress: string) => {
-    messageApi.open({
-      type: "loading",
-      content: "Transaction in progress..",
-      duration: 0,
-    });
+  //   messageApi.open({
+  //     type: "loading",
+  //     content: "Transaction in progress..",
+  //     duration: 0,
+  //   });
 
-    let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
-    messageApi.destroy();
+  //   let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
+  //   messageApi.destroy();
 
-    if (response.status === "success") {
-      revokeDoctorCallback(doctorAddress);
-    } else {
-      messageApi.open({
-        type: "error",
-        content: "Error revoking doctor profile",
-      });
-    }
+  //   if (response.status === "success") {
+  //     revokeDoctorCallback(doctorAddress);
+  //   } else {
+  //     messageApi.open({
+  //       type: "error",
+  //       content: "Error revoking doctor profile",
+  //     });
+  //   }
   };
 
   return (

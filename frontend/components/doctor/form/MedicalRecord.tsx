@@ -2,15 +2,13 @@ import dayjs from "dayjs";
 import { format } from "date-fns";
 
 import { useLocation } from "react-router-dom";
-import { appendRecord, generateHash } from "../../../utils/util";
+import { appendRecord, generateHash } from "../../../utils/util.ts";
 
 import { Button, Card, DatePicker, Form, Input, message, Select, Space, TimePicker } from "antd";
 
 const MedicalRecord = () => {
   const [form] = Form.useForm();
   const location = useLocation();
-  const { connection } = useConnection();
-  const wallet = useAnchorWallet() as Wallet;
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -18,44 +16,40 @@ const MedicalRecord = () => {
   const patientAddress = location.state?.address;
 
   const onFinish = async (values: any) => {
-    const record = {
-      ...values,
-      date: format(values.date.toDate(), "dd-MM-yyyy"),
-      time: format(values.time.toDate(), "hh:mm a"),
-    };
-    const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
-    console.log(record, recordHash);
-
-    messageApi.open({
-      type: "loading",
-      content: "Transaction in progress..",
-      duration: 0,
-    });
-
-    let response = await appendRecord(
-      connection,
-      wallet,
-      recordHash,
-      JSON.stringify(record),
-      patientAddress,
-      "medicalRecords",
-    );
-
-    messageApi.destroy();
-    if (response.status === "success") {
-      // Reset the form fields to their initial state
-      form.resetFields();
-
-      messageApi.open({
-        type: "success",
-        content: "Record created successfully!",
-      });
-    } else {
-      messageApi.open({
-        type: "error",
-        content: "Error creating record!",
-      });
-    }
+    // const record = {
+    //   ...values,
+    //   date: format(values.date.toDate(), "dd-MM-yyyy"),
+    //   time: format(values.time.toDate(), "hh:mm a"),
+    // };
+    // const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
+    // console.log(record, recordHash);
+    // messageApi.open({
+    //   type: "loading",
+    //   content: "Transaction in progress..",
+    //   duration: 0,
+    // });
+    // let response = await appendRecord(
+    //   connection,
+    //   wallet,
+    //   recordHash,
+    //   JSON.stringify(record),
+    //   patientAddress,
+    //   "medicalRecords",
+    // );
+    // messageApi.destroy();
+    // if (response.status === "success") {
+    //   // Reset the form fields to their initial state
+    //   form.resetFields();
+    //   messageApi.open({
+    //     type: "success",
+    //     content: "Record created successfully!",
+    //   });
+    // } else {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "Error creating record!",
+    //   });
+    // }
   };
 
   const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };

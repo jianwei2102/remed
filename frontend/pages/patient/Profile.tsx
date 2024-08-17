@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { decryptData, fetchProfile } from "../../utils/util";
+import { decryptData, fetchProfile } from "../../utils/util.ts";
 
 import { Avatar, Button, Card, Col, Descriptions, Image, Modal, QRCode, QRCodeProps, Row, Space } from "antd";
 
@@ -32,7 +32,7 @@ interface ProfileDetails {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { connection } = useConnection();
+
   const wallet = useAnchorWallet() as Wallet;
 
   const [details, setDetails] = useState<ProfileDetails | null>(null);

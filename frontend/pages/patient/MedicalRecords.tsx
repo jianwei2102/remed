@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { MedicalRecordItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
-import { decryptData, fetchProfile, fetchRecord } from "../../utils/util";
+import { decryptData, fetchProfile, fetchRecord } from "../../utils/util.ts";
 
 interface Record {
   recordHash: string;
@@ -20,7 +20,7 @@ interface MedicalRecord {
 
 const MedicalRecords = () => {
   const navigate = useNavigate();
-  const { connection } = useConnection();
+
   const wallet = useAnchorWallet() as Wallet;
 
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);

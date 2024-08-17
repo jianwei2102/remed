@@ -1,18 +1,9 @@
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchProfile, decryptData, revokePatient } from "../../utils/util";
+import { fetchProfile, decryptData, revokePatient } from "../../utils/util.ts";
 
-import {
-  Col,
-  Row,
-  Image,
-  Button,
-  message,
-  Drawer,
-  Divider,
-  Avatar,
-} from "antd";
+import { Col, Row, Image, Button, message, Drawer, Divider, Avatar } from "antd";
 
 interface PatientAuthorizedProps {
   patientDetails: { address: string; date: string };
@@ -51,9 +42,7 @@ interface DescriptionItemProps {
 
 const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
   <div className="mb-[7px] text-black/65 text-[14px] leading-[1.5715]">
-    <span className="inline-block text-black/85">
-      {title ? `${title}:` : ""}
-    </span>
+    <span className="inline-block text-black/85">{title ? `${title}:` : ""}</span>
     <span
       className={`${title ? "ml-2" : ""}`}
       dangerouslySetInnerHTML={{
@@ -63,10 +52,7 @@ const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
   </div>
 );
 
-const PatientAuthorized = ({
-  patientDetails,
-  revokePatientCallback,
-}: PatientAuthorizedProps) => {
+const PatientAuthorized = ({ patientDetails, revokePatientCallback }: PatientAuthorizedProps) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [open, setOpen] = useState(false);
@@ -95,7 +81,6 @@ const PatientAuthorized = ({
     //     setProfile(undefined);
     //   }
     // };
-
     // getProfile();
   }, [patientDetails]);
 
@@ -105,10 +90,8 @@ const PatientAuthorized = ({
     //   content: "Transaction in progress..",
     //   duration: 0,
     // });
-
     // let response = await revokePatient(connection, wallet, patientAddress);
     // messageApi.destroy();
-
     // if (response.status === "success") {
     //   revokePatientCallback(patientAddress);
     // } else {
@@ -173,13 +156,7 @@ const PatientAuthorized = ({
       </Row>
 
       {/* Patient Profile Drawer */}
-      <Drawer
-        width={640}
-        placement="right"
-        closable={false}
-        onClose={onClose}
-        open={open}
-      >
+      <Drawer width={640} placement="right" closable={false} onClose={onClose} open={open}>
         <div className="text-xl mb-6 italic">Patient Profile</div>
         {profile ? (
           <>
@@ -198,60 +175,36 @@ const PatientAuthorized = ({
             </div>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Full Name"
-                  content={profile?.patient.name}
-                />
+                <DescriptionItem title="Full Name" content={profile?.patient.name} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Gender"
-                  content={profile?.patient.gender}
-                />
+                <DescriptionItem title="Gender" content={profile?.patient.gender} />
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Blood Group"
-                  content={profile?.patient.bloodGroup}
-                />
+                <DescriptionItem title="Blood Group" content={profile?.patient.bloodGroup} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Date Of Birth"
-                  content={profile?.patient.dateOfBirth}
-                />
+                <DescriptionItem title="Date Of Birth" content={profile?.patient.dateOfBirth} />
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Phone No."
-                  content={profile?.patient.phoneNo}
-                />
+                <DescriptionItem title="Phone No." content={profile?.patient.phoneNo} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Address"
-                  content={profile?.patient.address}
-                />
+                <DescriptionItem title="Address" content={profile?.patient.address} />
               </Col>
             </Row>
             <Row>
               <Col span={24}>
-                <DescriptionItem
-                  title="Authorized Date"
-                  content={patientDetails.date}
-                />
+                <DescriptionItem title="Authorized Date" content={patientDetails.date} />
               </Col>
             </Row>
             <Row>
               <Col span={24}>
-                <DescriptionItem
-                  title="Account Address"
-                  content={patientDetails.address}
-                />
+                <DescriptionItem title="Account Address" content={patientDetails.address} />
               </Col>
             </Row>
             <Divider />
@@ -270,44 +223,26 @@ const PatientAuthorized = ({
             </div>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Full Name"
-                  content={profile?.nextOfKin.name}
-                />
+                <DescriptionItem title="Full Name" content={profile?.nextOfKin.name} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Gender"
-                  content={profile?.nextOfKin.gender}
-                />
+                <DescriptionItem title="Gender" content={profile?.nextOfKin.gender} />
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Relationship"
-                  content={profile?.nextOfKin.relationship}
-                />
+                <DescriptionItem title="Relationship" content={profile?.nextOfKin.relationship} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Date of Birth"
-                  content={profile?.nextOfKin.dateOfBirth}
-                />
+                <DescriptionItem title="Date of Birth" content={profile?.nextOfKin.dateOfBirth} />
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <DescriptionItem
-                  title="Phone No."
-                  content={profile?.nextOfKin.phoneNo}
-                />
+                <DescriptionItem title="Phone No." content={profile?.nextOfKin.phoneNo} />
               </Col>
               <Col span={12}>
-                <DescriptionItem
-                  title="Address"
-                  content={profile?.nextOfKin.address}
-                />
+                <DescriptionItem title="Address" content={profile?.nextOfKin.address} />
               </Col>
             </Row>
             <Divider />

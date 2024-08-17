@@ -1,7 +1,7 @@
 import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
-import { fetchProfile, decryptData } from "../../utils/util";
+import { fetchProfile, decryptData } from "../../utils/util.ts";
 import { Col, Row, Image, Button, message, Drawer, Divider } from "antd";
 
 interface DoctorRequestedProps {
@@ -41,7 +41,6 @@ const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
 );
 
 const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeRequestCallback }: DoctorRequestedProps) => {
-  const { connection } = useConnection();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [open, setOpen] = useState(false);

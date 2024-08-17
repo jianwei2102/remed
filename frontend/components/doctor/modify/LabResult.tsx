@@ -8,7 +8,7 @@ import { Button, Form, message, Radio } from "antd";
 import { UploadFile } from "antd/es/upload/interface";
 import { useStorageUpload } from "@thirdweb-dev/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { generateHash, modifyRecord } from "../../../utils/util";
+import { generateHash, modifyRecord } from "../../../utils/util.ts";
 
 const LabResult = () => {
   const [form] = Form.useForm();

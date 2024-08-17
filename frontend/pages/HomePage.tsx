@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProfile } from "../utils/util";
+import { fetchProfile } from "../utils/util.ts";
 import { Welcoming, UserRegister, PatientDashboard, DoctorDashboard } from ".";
 
 const HomePage = () => {
