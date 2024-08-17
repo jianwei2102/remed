@@ -10,17 +10,17 @@ import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image 
 
 const { Option } = Select;
 
-const DoctorRegister = () => {
+const ResearcherRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   // const { connection } = useConnection();
   // const wallet = useAnchorWallet() as Wallet;
   const { mutateAsync: upload } = useStorageUpload();
-  const { account, connected } = useWallet();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
+  const { account, connected } = useWallet();
 
   const uploadToIpfs = async (file: File) => {
     try {
@@ -42,16 +42,12 @@ const DoctorRegister = () => {
   };
 
   const onFinish = async (values: any) => {
-    // Combine the title and full name
-    const { fullName, ...rest } = values;
-    const combinedFullName = `${fullName.title} ${fullName.name}`;
-    // Update the values with the combined full name
-    const formattedValues = {
-      ...rest,
-      fullName: combinedFullName,
-    };
 
-    // Upload Image to IPFS
+    const formattedValues = {
+      ...values,
+    };
+  
+    // Upload Image
     try {
       messageApi.open({
         type: "loading",
@@ -67,7 +63,7 @@ const DoctorRegister = () => {
       console.error("Error uploading file(s) to IPFS:", error);
     }
 
-    // Add Info to DB
+    // Add User to Database
     try {
       messageApi.open({
         type: "loading",
@@ -79,11 +75,10 @@ const DoctorRegister = () => {
         userInfo: JSON.stringify(formattedValues),
         address: account?.address,
         maschainAddress: "",
-        role: "doctor",
+        role: "researcher",
       });
 
       messageApi.destroy();
-
       console.log(response);
 
       if (response.statusText === "OK") {
@@ -92,7 +87,7 @@ const DoctorRegister = () => {
           content: "User profile created successfully",
         });
         setTimeout(() => {
-          navigate("/authorization");
+          navigate("/researcher/purchaseRecord");
         }, 500);
       } else {
         messageApi.open({
@@ -141,30 +136,20 @@ const DoctorRegister = () => {
         {/* Left Section */}
         <Col span={12} className=" !pl-4">
           <Form.Item>
-            <div className="text-lg italic font-semibold">Doctor Profile</div>
+            <div className="text-lg italic font-semibold">Researcher Profile</div>
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name={["fullName"]}
             label="Full Name"
             required
             rules={[
               {
                 required: true,
-                message: "Please input the doctor's full name!",
+                message: "Please input the researcher's full name!",
               },
             ]}
           >
-            <Input.Group compact>
-              <Form.Item name={["fullName", "title"]} noStyle initialValue="Dr.">
-                <Select style={{ width: "25%" }} defaultValue="Dr.">
-                  <Option value="Dr.">Dr.</Option>
-                  <Option value="MD">MD</Option>
-                  <Option value="DO">DO</Option>
-                  <Option value="Prof.">Prof.</Option>
-                  <Option value="Consultant">Consultant</Option>
-                  <Option value="Specialist">Specialist</Option>
-                </Select>
-              </Form.Item>
+            <Input.Group>
               <Form.Item
                 name={["fullName", "name"]}
                 noStyle
@@ -178,42 +163,32 @@ const DoctorRegister = () => {
                 <Input placeholder="Rayon Robert" style={{ width: "70%" }} />
               </Form.Item>
             </Input.Group>
-          </Form.Item>
-          <Form.Item
-            name={["specialization"]}
-            label="Specialization"
-            required
+          </Form.Item> */}
+          {/* <Form.Item
+            name={["fullName", "name"]}
+            noStyle
             rules={[
               {
                 required: true,
-                message: "Please select the doctor's specialization!",
+                message: "Please input the doctor's full name!",
               },
             ]}
+          ></Form.Item> */}
+          <Form.Item
+            name={["name"]}
+            label="Full Name"
+            required
+            rules={[{ required: true, message: "Please input the user's full name!" }]}
           >
-            <Select placeholder="Select Specialization" style={{ width: "95%" }}>
-              <Select.Option value="Radiologist">Radiologist</Select.Option>
-              <Select.Option value="Oncologist">Oncologist</Select.Option>
-              <Select.Option value="Neurologist">Neurologist</Select.Option>
-              <Select.Option value="Pharmacist">Pharmacist</Select.Option>
-              <Select.Option value="Pediatrician">Pediatrician</Select.Option>
-              <Select.Option value="Cardiologist">Cardiologist</Select.Option>
-              <Select.Option value="Gynecologist">Gynecologist</Select.Option>
-              <Select.Option value="Ophthalmologist">Ophthalmologist</Select.Option>
-              <Select.Option value="General Practitioner">General Practitioner</Select.Option>
-            </Select>
+            <Input placeholder="Kyle Robinson" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
-            name={["medicalLicenseNumber"]}
-            label="Medical License Number"
+            name={["ic"]}
+            label="IC"
             required
-            rules={[
-              {
-                required: true,
-                message: "Please input the doctor's medical license number!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please input the user's IC!" }]}
           >
-            <Input placeholder="123456789" style={{ width: "95%" }} />
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["affiliations"]}
@@ -229,17 +204,20 @@ const DoctorRegister = () => {
             <Input placeholder="Hospital ABC, Clinic XYZ" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
-            name={["workHours"]}
-            label="Work Hours"
+            name={["education"]}
+            label="Education"
             required
             rules={[
               {
                 required: true,
-                message: "Please input the doctor's work hours!",
+                message: "Please input the doctor's education!",
               },
             ]}
           >
-            <Input placeholder="Mon-Fri 9:00 AM - 5:00 PM" style={{ width: "95%" }} />
+            <Input.TextArea
+              placeholder="Medical School, Degrees, Certifications"
+              style={{ width: "95%", height: "100px" }}
+            />
           </Form.Item>
           <Form.Item
             name={["image"]}
@@ -274,7 +252,7 @@ const DoctorRegister = () => {
         {/* Right Section */}
         <Col span={12} className="!pl-4">
           <Form.Item></Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name={["education"]}
             label="Education"
             required
@@ -289,7 +267,7 @@ const DoctorRegister = () => {
               placeholder="Medical School, Degrees, Certifications"
               style={{ width: "95%", height: "100px" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             name={["experience"]}
             label="Experience"
@@ -385,4 +363,4 @@ const DoctorRegister = () => {
   );
 };
 
-export default DoctorRegister;
+export default ResearcherRegister;

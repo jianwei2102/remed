@@ -18,12 +18,32 @@ app.get('/users', async (req, res) => {
 // Add a new user
 app.post('/users', async (req, res) => {
     const user = new User({
-        username: req.body.username,
+        userInfo: req.body.userInfo,
         address: req.body.address,
-        role: req.body.role,
+        maschainAddress: req.body.maschainAddress,
+        role: req.body.role
     });
 
     await user.save();
+    res.json(user);
+});
+
+// Get user by address
+app.get('/users/:id', async (req, res) => {
+    const user = await User.findOne({
+        address: req.params.id
+    });
+
+    res.json(user);
+});
+
+// Get authorized doctor by address
+app.get('/doctor/:id', async (req, res) => {
+    const user = await User.findOne({
+        address: req.params.id,
+        role: 'doctor'
+    });
+
     res.json(user);
 });
 

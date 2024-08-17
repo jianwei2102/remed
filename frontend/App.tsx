@@ -8,12 +8,15 @@ import { AccountInfo } from "@/components/AcoountInfo";
 
 import { useState } from "react";
 import { Button, Layout, theme } from "antd";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Logo, MenuList, ToggleThemeButton, DateTime } from "./components/index.tsx";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { WalletSelector } from "./components/WalletSelector.tsx";
 import {
   HomePage,
+  PurchaseRecord,
+  Collection,
   Authorization,
   MedicalRecords,
   Medications,
@@ -42,7 +45,7 @@ function App() {
   } = theme.useToken();
 
   return (
-    <>
+    <ThirdwebProvider clientId={import.meta.env.VITE_APP_ThirdWeb_Client_ID}>
       {/* <Header />
 
       <div className="flex items-center justify-center flex-col">
@@ -107,27 +110,29 @@ function App() {
               >
                 <Routes>
                   <Route path="/" element={<HomePage />} />
-                  {/* <Route path="/authorization" element={<Authorization />} />
+                  <Route path="/purchaseRecord" element={<PurchaseRecord />} />
+                  <Route path="/collection" element={<Collection />} />
+                  <Route path="/authorization" element={<Authorization />} />
+                  <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
                   <Route path="/labResults" element={<LabResults />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/settings" element={<Settings />} />
-
                   <Route path="/test" element={<Test />} />
-
                   <Route path="/doctor/authorization" element={<DoctorAuthorization />} />
                   <Route path="/doctor/viewRecord" element={<ViewRecord />} />
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
-                   <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
+                  <Route path="/doctor/profile" element={<DoctorProfile />} />
+                  <Route path="/researcher/purchaseRecord" element={<PurchaseRecord />} />
                 </Routes>
               </div>
             </Content>
           </Layout>
         </Layout>
       </Router>
-    </>
+    </ThirdwebProvider>
   );
 }
 

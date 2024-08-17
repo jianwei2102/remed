@@ -4,6 +4,7 @@ export { default as Settings } from "./Settings.tsx";
 export { default as UserRegister } from "./registration/UserRegister.tsx";
 export { default as PatientRegister } from "./registration/PatientRegister.tsx";
 export { default as DoctorRegister } from "./registration/DoctorRegister.tsx";
+export { default as ResearcherRegister } from "./registration/ResearcherRegister.tsx";
 
 export { default as PatientDashboard } from "./patient/PatientDashboard.tsx";
 export { default as Authorization } from "./patient/Authorization.tsx";
@@ -18,3 +19,6 @@ export { default as DoctorProfile } from "./doctor/Profile.tsx";
 export { default as ViewRecord } from "./doctor/ViewRecord.tsx";
 export { default as AppendRecord } from "./doctor/AppendRecord.tsx";
 export { default as ModifyRecord } from "./doctor/ModifyRecord.tsx";
+
+export { default as PurchaseRecord } from "./researcher/PurchaseRecord.tsx";
+export { default as Collection } from "./researcher/Collection.tsx";

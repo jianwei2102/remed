@@ -21,53 +21,47 @@ interface MedicalRecord {
 const MedicalRecords = () => {
   const navigate = useNavigate();
 
-  const wallet = useAnchorWallet() as Wallet;
-
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
 
   const getMedicalRecords = useCallback(async () => {
-    let response = await fetchRecord(connection, wallet as Wallet);
-    if (response.status === "success") {
-      let accountData = (
-        response.data as {
-          records: Record[];
-        }
-      ).records;
-
-      // Filter records where recordType is "medicalRecord"
-      let filteredRecords = accountData.filter((record) => record.recordType === "medicalRecords");
-
-      // Decrypt and map recordDetails
-      let decryptedRecords = filteredRecords.map((record) => ({
-        data: decryptData(record.recordDetails, "record"),
-        hash: record.recordHash,
-        addedBy: record.addedBy,
-        patientAddress: "",
-        patientName: "",
-      }));
-
-      setMedicalRecords(decryptedRecords.reverse());
-    }
-  }, [connection, wallet]);
+    // let response = await fetchRecord(connection, wallet as Wallet);
+    // if (response.status === "success") {
+    //   let accountData = (
+    //     response.data as {
+    //       records: Record[];
+    //     }
+    //   ).records;
+    //   // Filter records where recordType is "medicalRecord"
+    //   let filteredRecords = accountData.filter((record) => record.recordType === "medicalRecords");
+    //   // Decrypt and map recordDetails
+    //   let decryptedRecords = filteredRecords.map((record) => ({
+    //     data: decryptData(record.recordDetails, "record"),
+    //     hash: record.recordHash,
+    //     addedBy: record.addedBy,
+    //     patientAddress: "",
+    //     patientName: "",
+    //   }));
+    //   setMedicalRecords(decryptedRecords.reverse());
+    // }
+  }, []);
 
   const getProfile = useCallback(async () => {
-    if (!connection || !wallet) {
-      navigate("/");
-      return;
-    }
-
-    let response = await fetchProfile(connection, wallet);
-    if (response.status === "success") {
-      const role = (response.data as { role: string }).role;
-      if (role === "patient") {
-        getMedicalRecords();
-      } else if (role === "doctor") {
-        navigate("/");
-      }
-    } else {
-      navigate("/");
-    }
-  }, [connection, wallet, navigate, getMedicalRecords]);
+    // if (!connection || !wallet) {
+    //   navigate("/");
+    //   return;
+    // }
+    // let response = await fetchProfile(connection, wallet);
+    // if (response.status === "success") {
+    //   const role = (response.data as { role: string }).role;
+    //   if (role === "patient") {
+    //     getMedicalRecords();
+    //   } else if (role === "doctor") {
+    //     navigate("/");
+    //   }
+    // } else {
+    //   navigate("/");
+    // }
+  }, [navigate, getMedicalRecords]);
 
   useEffect(() => {
     getProfile();

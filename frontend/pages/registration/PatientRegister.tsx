@@ -6,10 +6,13 @@ import { FaInfo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useStorageUpload } from "@thirdweb-dev/react";
 import { Button, Form, Input, Select, DatePicker, Row, Col, message, Image, Avatar, Tooltip } from "antd";
+import { creatMaschainWallet } from "@/lib/maschain";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 const PatientRegister = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { account, connected } = useWallet();
   const { mutateAsync: upload } = useStorageUpload();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -38,70 +41,97 @@ const PatientRegister = () => {
   };
 
   const onFinish = async (values: any) => {
-    // const formattedValues = {
-    //   ...values,
-    //   patient: {
-    //     ...values.patient,
-    //     dateOfBirth: format(new Date(values.patient.dateOfBirth), "dd-MM-yyyy"),
-    //   },
-    //   nextOfKin: {
-    //     ...values.nextOfKin,
-    //     dateOfBirth: format(
-    //       new Date(values.nextOfKin.dateOfBirth),
-    //       "dd-MM-yyyy"
-    //     ),
-    //   },
-    // };
-    // try {
-    //   messageApi.open({
-    //     type: "loading",
-    //     content: "Uploading image file(s) to IPFS..",
-    //     duration: 0,
-    //   });
-    //   if (patientFile) {
-    //     const patientCid = await uploadToIpfs(patientFile);
-    //     formattedValues.patient.image = patientCid; // Replace image with CID
-    //   }
-    //   if (nokFile) {
-    //     const nokCid = await uploadToIpfs(nokFile);
-    //     formattedValues.nextOfKin.image = nokCid; // Replace image with CID
-    //   }
-    //   messageApi.destroy();
-    //   console.log("Received values of form: ", formattedValues);
-    // } catch (error) {
-    //   console.error("Error uploading file(s) to IPFS:", error);
-    // }
-    // messageApi.open({
-    //   type: "loading",
-    //   content: "Transaction in progress..",
-    //   duration: 0,
-    // });
-    // let response = await createProfile(
-    //   connection,
-    //   wallet,
-    //   "patient",
-    //   JSON.stringify(formattedValues)
-    // );
-    // await axios.post("http://localhost:4000/users", {
-    //   username: formattedValues.patient.name,
-    //   address: wallet.publicKey.toBase58(),
-    //   role: "patient",
-    // });
-    // messageApi.destroy();
-    // if (response.status === "success") {
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "User profile created successfully",
-    //   });
-    //   setTimeout(() => {
-    //     navigate("/doctor/authorization");
-    //   }, 500);
-    // } else {
-    //   messageApi.open({
-    //     type: "error",
-    //     content: "Error creating user profile",
-    //   });
-    // }
+    const formattedValues = {
+      ...values,
+      patient: {
+        ...values.patient,
+        dateOfBirth: format(new Date(values.patient.dateOfBirth), "dd-MM-yyyy"),
+      },
+      nextOfKin: {
+        ...values.nextOfKin,
+        dateOfBirth: format(
+          new Date(values.nextOfKin.dateOfBirth),
+          "dd-MM-yyyy"
+        ),
+      },
+    };
+
+    const maschainWalletData = {
+      name: formattedValues.patient.name,
+      email: formattedValues.patient.email,
+      ic: formattedValues.patient.ic,
+      phone: formattedValues.patient.phoneNo,
+    };
+
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Uploading image file(s) to IPFS..",
+        duration: 0,
+      });
+      if (patientFile) {
+        const patientCid = await uploadToIpfs(patientFile);
+        formattedValues.patient.image = patientCid; // Replace image with CID
+      }
+      if (nokFile) {
+        const nokCid = await uploadToIpfs(nokFile);
+        formattedValues.nextOfKin.image = nokCid; // Replace image with CID
+      }
+      messageApi.destroy();
+      console.log("Received values of form: ", formattedValues);
+    } catch (error) {
+      console.error("Error uploading file(s) to IPFS:", error);
+    }
+
+    // Maschain Wallet Creation
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Creating Maschain Wallet..",
+        duration: 0,
+      });
+      const response = await creatMaschainWallet(maschainWalletData);
+      formattedValues.patient.maschainAddress = response.result.wallet.wallet_address;
+      messageApi.destroy();
+    } catch (error) {
+      console.error("Error creating Maschain Wallet:", error);
+    }
+
+    // Add to DB
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Adding information to database in progress..",
+        duration: 0,
+      });
+
+      let response = await axios.post("http://localhost:4000/users", {
+        userInfo: JSON.stringify(formattedValues),
+        address: account?.address,
+        maschainAddress: formattedValues.patient.maschainAddress,
+        role: "patient",
+      });
+
+      messageApi.destroy();
+
+      if (response.statusText === "OK") {
+        messageApi.open({
+          type: "success",
+          content: "User profile created successfully",
+        });
+        setTimeout(() => {
+          navigate("/doctor/authorization");
+        }, 500);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Error creating user profile",
+        });
+      }
+
+    } catch (error) {
+      console.error("Error adding information to database:", error);
+    }
   };
 
   return (
@@ -120,6 +150,22 @@ const PatientRegister = () => {
             rules={[{ required: true, message: "Please input the user's full name!" }]}
           >
             <Input placeholder="Samuel Robinson" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["patient", "ic"]} // Nested field for patient name
+            label="IC"
+            required
+            rules={[{ required: true, message: "Please input the user's IC!" }]}
+          >
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["patient", "email"]} // Nested field for patient name
+            label="Email"
+            required
+            rules={[{ required: true, message: "Please input the user's email!" }]}
+          >
+            <Input placeholder="test@mail.com" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["patient", "gender"]} // Nested field for patient gender
@@ -235,6 +281,27 @@ const PatientRegister = () => {
             ]}
           >
             <Input placeholder="Fave Robinson" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["nextOfKin", "ic"]} // Nested field for next of kin name
+            label="IC"
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input the next of kin's IC!",
+              },
+            ]}
+          >
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
+          </Form.Item>
+          <Form.Item
+            name={["nextOfKin", "email"]} // Nested field for patient name
+            label="Email"
+            required
+            rules={[{ required: true, message: "Please input the next of kin's email!" }]}
+          >
+            <Input placeholder="test@mail.com" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["nextOfKin", "gender"]} // Nested field for next of kin gender

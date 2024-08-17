@@ -54,22 +54,21 @@ const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeReques
   };
 
   useEffect(() => {
-    const getProfile = async () => {
-      const publicKey = new web3.PublicKey(doctorDetails.address);
-      const doctorWallet = { publicKey };
-      let response = await fetchProfile(connection, doctorWallet as Wallet);
-      if (response.status === "success") {
-        const decryptedProfile = decryptData(
-          (response.data as { personalDetails: string })["personalDetails"],
-          "profile",
-        );
-        setProfile(JSON.parse(decryptedProfile));
-        // console.log(JSON.parse(decryptedProfile));
-      }
-    };
-
-    getProfile();
-  }, [connection, doctorDetails]);
+    // const getProfile = async () => {
+    //   const publicKey = new web3.PublicKey(doctorDetails.address);
+    //   const doctorWallet = { publicKey };
+    //   let response = await fetchProfile(connection, doctorWallet as Wallet);
+    //   if (response.status === "success") {
+    //     const decryptedProfile = decryptData(
+    //       (response.data as { personalDetails: string })["personalDetails"],
+    //       "profile",
+    //     );
+    //     setProfile(JSON.parse(decryptedProfile));
+    //     // console.log(JSON.parse(decryptedProfile));
+    //   }
+    // };
+    // getProfile();
+  }, [doctorDetails]);
 
   const revokeDoctorFunc = async () => {
     messageApi.open({
@@ -99,7 +98,7 @@ const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeReques
           <Image
             width={64}
             className="rounded-full"
-            src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
+            src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
             alt="Avatar Image"
           />
         </Col>

@@ -66,28 +66,25 @@ const DoctorAuthorized = ({ doctorDetails, revokeDoctorCallback }: DoctorAuthori
     //     // console.log(JSON.parse(decryptedProfile));
     //   }
     // };
-
     // getProfile();
   }, [doctorDetails]);
 
   const revokeDoc = async (doctorAddress: string) => {
-  //   messageApi.open({
-  //     type: "loading",
-  //     content: "Transaction in progress..",
-  //     duration: 0,
-  //   });
-
-  //   let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
-  //   messageApi.destroy();
-
-  //   if (response.status === "success") {
-  //     revokeDoctorCallback(doctorAddress);
-  //   } else {
-  //     messageApi.open({
-  //       type: "error",
-  //       content: "Error revoking doctor profile",
-  //     });
-  //   }
+    //   messageApi.open({
+    //     type: "loading",
+    //     content: "Transaction in progress..",
+    //     duration: 0,
+    //   });
+    //   let response = await revokeDoctor(connection, wallet as Wallet, doctorAddress);
+    //   messageApi.destroy();
+    //   if (response.status === "success") {
+    //     revokeDoctorCallback(doctorAddress);
+    //   } else {
+    //     messageApi.open({
+    //       type: "error",
+    //       content: "Error revoking doctor profile",
+    //     });
+    //   }
   };
 
   return (
@@ -98,7 +95,7 @@ const DoctorAuthorized = ({ doctorDetails, revokeDoctorCallback }: DoctorAuthori
           <Image
             width={64}
             className="rounded-full"
-            src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
+            src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
             alt="Avatar Image"
           />
         </Col>
