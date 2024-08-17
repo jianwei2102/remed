@@ -100,30 +100,20 @@ const ResearcherRegister = () => {
         {/* Left Section */}
         <Col span={12} className=" !pl-4">
           <Form.Item>
-            <div className="text-lg italic font-semibold">Doctor Profile</div>
+            <div className="text-lg italic font-semibold">Researcher Profile</div>
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name={["fullName"]}
             label="Full Name"
             required
             rules={[
               {
                 required: true,
-                message: "Please input the doctor's full name!",
+                message: "Please input the researcher's full name!",
               },
             ]}
           >
-            <Input.Group compact>
-              <Form.Item name={["fullName", "title"]} noStyle initialValue="Dr.">
-                <Select style={{ width: "25%" }} defaultValue="Dr.">
-                  <Option value="Dr.">Dr.</Option>
-                  <Option value="MD">MD</Option>
-                  <Option value="DO">DO</Option>
-                  <Option value="Prof.">Prof.</Option>
-                  <Option value="Consultant">Consultant</Option>
-                  <Option value="Specialist">Specialist</Option>
-                </Select>
-              </Form.Item>
+            <Input.Group>
               <Form.Item
                 name={["fullName", "name"]}
                 noStyle
@@ -137,42 +127,32 @@ const ResearcherRegister = () => {
                 <Input placeholder="Rayon Robert" style={{ width: "70%" }} />
               </Form.Item>
             </Input.Group>
-          </Form.Item>
-          <Form.Item
-            name={["specialization"]}
-            label="Specialization"
-            required
+          </Form.Item> */}
+          {/* <Form.Item
+            name={["fullName", "name"]}
+            noStyle
             rules={[
               {
                 required: true,
-                message: "Please select the doctor's specialization!",
+                message: "Please input the doctor's full name!",
               },
             ]}
+          ></Form.Item> */}
+          <Form.Item
+            name={["patient", "name"]} // Nested field for patient name
+            label="Full Name"
+            required
+            rules={[{ required: true, message: "Please input the user's full name!" }]}
           >
-            <Select placeholder="Select Specialization" style={{ width: "95%" }}>
-              <Select.Option value="Radiologist">Radiologist</Select.Option>
-              <Select.Option value="Oncologist">Oncologist</Select.Option>
-              <Select.Option value="Neurologist">Neurologist</Select.Option>
-              <Select.Option value="Pharmacist">Pharmacist</Select.Option>
-              <Select.Option value="Pediatrician">Pediatrician</Select.Option>
-              <Select.Option value="Cardiologist">Cardiologist</Select.Option>
-              <Select.Option value="Gynecologist">Gynecologist</Select.Option>
-              <Select.Option value="Ophthalmologist">Ophthalmologist</Select.Option>
-              <Select.Option value="General Practitioner">General Practitioner</Select.Option>
-            </Select>
+            <Input placeholder="Kyle Robinson" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
-            name={["medicalLicenseNumber"]}
-            label="Medical License Number"
+            name={["patient", "ic"]} // Nested field for patient name
+            label="IC"
             required
-            rules={[
-              {
-                required: true,
-                message: "Please input the doctor's medical license number!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please input the user's IC!" }]}
           >
-            <Input placeholder="123456789" style={{ width: "95%" }} />
+            <Input placeholder="010304-10-2912" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
             name={["affiliations"]}
@@ -188,17 +168,20 @@ const ResearcherRegister = () => {
             <Input placeholder="Hospital ABC, Clinic XYZ" style={{ width: "95%" }} />
           </Form.Item>
           <Form.Item
-            name={["workHours"]}
-            label="Work Hours"
+            name={["education"]}
+            label="Education"
             required
             rules={[
               {
                 required: true,
-                message: "Please input the doctor's work hours!",
+                message: "Please input the doctor's education!",
               },
             ]}
           >
-            <Input placeholder="Mon-Fri 9:00 AM - 5:00 PM" style={{ width: "95%" }} />
+            <Input.TextArea
+              placeholder="Medical School, Degrees, Certifications"
+              style={{ width: "95%", height: "100px" }}
+            />
           </Form.Item>
           <Form.Item
             name={["image"]}
@@ -233,7 +216,7 @@ const ResearcherRegister = () => {
         {/* Right Section */}
         <Col span={12} className="!pl-4">
           <Form.Item></Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name={["education"]}
             label="Education"
             required
@@ -248,7 +231,7 @@ const ResearcherRegister = () => {
               placeholder="Medical School, Degrees, Certifications"
               style={{ width: "95%", height: "100px" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             name={["experience"]}
             label="Experience"
