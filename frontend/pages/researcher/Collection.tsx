@@ -10,6 +10,28 @@ interface DataType {
   name: string;
 }
 
+const csvData = {
+  "medical-record": `[
+  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
+  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
+  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
+  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"}]`,
+  medication: `[
+  {"medications":[{"indication":"Antihypertension","medication":"Paracetamol 500mg","frequency":"Twice a day","administration":"Take before food","duration":3},{"indication":"Pain Relief","medication":"Lisinopril 10mg","frequency":"Twice a day","administration":"Take before bedtime","duration":1}],"date":"12-08-2024","time":"12:33 PM","location":"Clinic Rayon"},
+  {"medications":[{"indication":"Antihypertension","medication":"Paracetamol 500mg","frequency":"Twice a day","administration":"Take before food","duration":3},{"indication":"Pain Relief","medication":"Lisinopril 10mg","frequency":"Twice a day","administration":"Take before bedtime","duration":1}],"date":"12-08-2024","time":"12:33 PM","location":"Clinic Rayon"},
+  {"medications":[{"indication":"Antihypertension","medication":"Paracetamol 500mg","frequency":"Twice a day","administration":"Take before food","duration":3},{"indication":"Pain Relief","medication":"Lisinopril 10mg","frequency":"Twice a day","administration":"Take before bedtime","duration":1}],"date":"12-08-2024","time":"12:33 PM","location":"Clinic Rayon"}]`,
+  "x-ray": `[
+  {"xrayResult":"No abnormalities detected","xrayImages":["bafybeia3xk77g7ijrgtyuntipvyznmddo3ekxwmtabdvzqnen2ktskcdai"],"date":"12-08-2024","time":"12:35 PM","type":"X-Ray","location":"Clinic Rayon"},
+  {"xrayResult":"No abnormalities detected","xrayImages":["bafybeia3xk77g7ijrgtyuntipvyznmddo3ekxwmtabdvzqnen2ktskcdai"],"date":"12-08-2024","time":"12:35 PM","type":"X-Ray","location":"Clinic Rayon"}]`,
+  "blood-count": `[
+  {"whiteBloodCells":"7","redBloodCells":"11","hematocrit":"12","hemoglobin":"2","platelets":"132","date":"12-08-2024","time":"12:34 PM","type":"Blood Test","location":"Clinic Rayon"},
+  {"whiteBloodCells":"7","redBloodCells":"11","hematocrit":"12","hemoglobin":"2","platelets":"132","date":"12-08-2024","time":"12:34 PM","type":"Blood Test","location":"Clinic Rayon"}]`,
+  "vital-sign": `[
+  {"systolicBP":120,"diastolicBP":80,"heartRate":120,"bodyTemperature":37,"date":"12-08-2024","time":"12:33 PM","type":"Vital Signs","location":"Clinic Rayon"},
+  {"systolicBP":120,"diastolicBP":80,"heartRate":120,"bodyTemperature":37,"date":"12-08-2024","time":"12:33 PM","type":"Vital Signs","location":"Clinic Rayon"},
+  {"systolicBP":120,"diastolicBP":80,"heartRate":120,"bodyTemperature":37,"date":"12-08-2024","time":"12:33 PM","type":"Vital Signs","location":"Clinic Rayon"}]`,
+};
+
 const columns: TableColumnsType<DataType> = [
   {
     title: "Title",
@@ -34,17 +56,12 @@ const data: DataType[] = [
 ];
 
 const Collection = () => {
+  const [selection, setSelection] = useState("medical-record");
+
   const onDownload = () => {
     try {
       const parser = new Parser();
-      const csv = parser.parse(
-        JSON.parse(
-          `[{"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-          {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-          {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-          {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"}]`,
-        ),
-      );
+      const csv = parser.parse(JSON.parse(csvData[selection as keyof typeof csvData]));
       console.log(csv);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
@@ -76,7 +93,14 @@ const Collection = () => {
       <div className="flex content-center items-center mt-4">
         <span className="text-lg">Filter By:</span>
         <Flex className="pl-4" vertical gap="middle">
-          <Radio.Group defaultValue="medical-record" size="large">
+          <Radio.Group
+            defaultValue="medical-record"
+            size="large"
+            onChange={(e) => {
+              setSelection(e.target.value);
+              console.log(e.target.value);
+            }}
+          >
             <Radio.Button value="medical-record">Medical Record</Radio.Button>
             <Radio.Button value="medication">Medication</Radio.Button>
             <Radio.Button value="x-ray">Lab Results - X Ray</Radio.Button>
