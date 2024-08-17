@@ -105,20 +105,19 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/purchaseRecord" element={<PurchaseRecord />} />
-                  {/* <Route path="/authorization" element={<Authorization />} />
+                  {/*<Route path="/authorization" element={<Authorization />} />
+                  <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
                   <Route path="/labResults" element={<LabResults />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/settings" element={<Settings />} />
-
                   <Route path="/test" element={<Test />} />
-
                   <Route path="/doctor/authorization" element={<DoctorAuthorization />} />
                   <Route path="/doctor/viewRecord" element={<ViewRecord />} />
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
-                   <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
+                  <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
                 </Routes>
               </div>
             </Content>

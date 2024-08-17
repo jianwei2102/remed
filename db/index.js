@@ -18,9 +18,10 @@ app.get('/users', async (req, res) => {
 // Add a new user
 app.post('/users', async (req, res) => {
     const user = new User({
-        username: req.body.username,
-        address: req.body.address,
-        role: req.body.role,
+        userInfo: req.body.userInfo,
+        aptosAddress: req.body.aptosAddress,
+        maschainAddress: req.body.maschainAddress,
+        role: req.body.role
     });
 
     await user.save();

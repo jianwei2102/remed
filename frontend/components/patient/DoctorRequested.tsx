@@ -67,7 +67,6 @@ const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeReques
     //     // console.log(JSON.parse(decryptedProfile));
     //   }
     // };
-
     // getProfile();
   }, [doctorDetails]);
 
@@ -99,7 +98,7 @@ const DoctorRequested = ({ doctorDetails, revokeRequestCallback, authorizeReques
           <Image
             width={64}
             className="rounded-full"
-            src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
+            src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.image}/`}
             alt="Avatar Image"
           />
         </Col>

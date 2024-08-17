@@ -88,7 +88,7 @@ const PatientRequested = ({ patientDetails, revokePatientCallback }: PatientRequ
             size={64}
             icon={
               <Image
-                src={`https://${process.env.REACT_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
+                src={`https://${import.meta.env.VITE_APP_ThirdWeb_Client_ID}.ipfscdn.io/ipfs/${profile?.patient.image}/`}
                 alt="Avatar Image"
               />
             }
