@@ -6,6 +6,8 @@ import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import { DoctorAuthorized, QRReader, DoctorRequested } from "../../components";
 import { authorizeDoctor, fetchAuthDoctor, fetchProfile } from "../../utils/util.ts";
 import { Button, Divider, Flex, Input, Space, Segmented, Modal, message } from "antd";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 interface AuthorizedDoctor {
   address: string;
@@ -29,6 +31,9 @@ const Authorization = () => {
   const [authorized, setAuthorized] = useState<AuthorizedDoctor[]>([]);
   const [segmentedValue, setSegmentedValue] = useState<string>("View All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { account } = useWallet();
+  const { connectedAddress } = useEthContractContext();
 
   const getAuthDoctor = useCallback(async () => {
     // if (connection && wallet) {
@@ -61,21 +66,35 @@ const Authorization = () => {
   }, []);
 
   const checkAuthority = useCallback(async () => {
-    // if (!connection || !wallet) {
-    //   navigate("/");
-    //   return;
-    // }
-    // let response = await fetchProfile(connection, wallet as Wallet);
-    // if (response.status === "success") {
-    //   const role = (response.data as { role: string }).role;
-    //   if (role === "patient") {
-    //     getAuthDoctor();
-    //   } else if (role === "doctor") {
-    //     navigate("/");
-    //   }
-    // } else {
-    //   navigate("/");
-    // }
+    let blockchain = import.meta.env.VITE_APP_BlockChain;
+    let wallet: any = null;
+    console.log(blockchain);
+    if (blockchain === "Ethereum") {
+      wallet = connectedAddress;
+    } else if (blockchain === "Aptos") {
+      wallet = account?.address;
+    } else {
+      navigate("/");
+    }
+
+    let response = await fetchProfile(wallet);
+    console.log(response);
+
+    if (response.status === "success") {
+      if (response.data === null) {
+        navigate("/");
+      }
+
+      if (response.data.role === "patient") {
+        getAuthDoctor();
+      } else if (response.data.role === "doctor") {
+        navigate("/");
+      } else if (response.data.role === "researcher") {
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
   }, [navigate, getAuthDoctor]);
 
   useEffect(() => {

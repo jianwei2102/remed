@@ -14,7 +14,6 @@ import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai";
 import { AiFillGift, AiOutlineGift } from "react-icons/ai";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-
 interface MenuListProps {
   darkTheme: boolean;
 }
@@ -41,24 +40,6 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
         icon: <AiOutlineHome size={18} />,
         label: "Homepage",
         onClick: () => navigate("/"),
-      },
-      {
-        key: "/purchaseRecord",
-        icon: <PiUserCheck size={18} />,
-        label: "Purchase Record",
-        onClick: () => navigate("/purchaseRecord"),
-      },
-      {
-        key: "/rewards",
-        icon: <AiOutlineGift size={18} />,
-        label: "Rewards",
-        onClick: () => navigate("/rewards"),
-      },
-      {
-        key: "/collection",
-        icon: <PiUserCheck size={18} />,
-        label: "Collection",
-        onClick: () => navigate("/collection"),
       },
     ],
     [navigate],
@@ -103,6 +84,12 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
         icon: <PiTestTubeDuotone size={18} />,
         label: "Lab Results",
         onClick: () => navigate("/labResults"),
+      },
+      {
+        key: "/rewards",
+        icon: <AiOutlineGift size={18} />,
+        label: "Rewards",
+        onClick: () => navigate("/rewards"),
       },
       {
         key: "/profile",
@@ -202,6 +189,12 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
       //   onClick: () => navigate("/doctor/profile"),
       // },
       {
+        key: "/collection",
+        icon: <PiUserCheck size={18} />,
+        label: "Collection",
+        onClick: () => navigate("/collection"),
+      },
+      {
         key: "/settings",
         icon: <AiOutlineSetting size={18} />,
         label: "Settings",
@@ -228,30 +221,9 @@ const MenuList = ({ darkTheme }: MenuListProps) => {
       } else {
         setMenuItems(defaultItem);
       }
-    }
+    };
 
     getProfile();
-
-    // if (wallet && connection) {
-    //   fetchProfile(connection, wallet as Wallet).then((data) => {
-    //     if (data.status === "success") {
-    //       let personalDetails = (data.data as { personalDetails: string })["personalDetails"];
-    //       if ((data.data as { role: string })["role"] === "patient") {
-    //         sessionStorage.setItem("name", JSON.parse(decryptData(personalDetails, "profile")).patient.name);
-    //         sessionStorage.setItem("role", "patient");
-    //         setMenuItems(patientItems);
-    //       } else if ((data.data as { role: string })["role"] === "doctor") {
-    //         const doctorDetails = JSON.parse(decryptData(personalDetails, "profile"));
-    //         sessionStorage.setItem("name", doctorDetails.fullName);
-    //         sessionStorage.setItem("affiliations", doctorDetails.affiliations);
-    //         sessionStorage.setItem("role", "doctor");
-    //         setMenuItems(doctorItems);
-    //       }
-    //     }
-    //   });
-    // } else {
-    //   setMenuItems(defaultItem);
-    // }
   }, [account, defaultItem, patientItems, doctorItems]);
 
   return (

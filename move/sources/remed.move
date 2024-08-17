@@ -1,4 +1,4 @@
-module remed::todolist {
+module remed_addr::remed {
     use aptos_framework::account;
     use std::vector;
     use std::signer;

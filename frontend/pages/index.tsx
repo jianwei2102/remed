@@ -21,5 +21,6 @@ export { default as ViewRecord } from "./doctor/ViewRecord.tsx";
 export { default as AppendRecord } from "./doctor/AppendRecord.tsx";
 export { default as ModifyRecord } from "./doctor/ModifyRecord.tsx";
 
+export { default as ResearcherDashboard } from "./researcher/ResearcherDashboard.tsx";
 export { default as PurchaseRecord } from "./researcher/PurchaseRecord.tsx";
 export { default as Collection } from "./researcher/Collection.tsx";
