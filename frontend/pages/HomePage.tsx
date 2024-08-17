@@ -30,22 +30,24 @@ const HomePage = () => {
     // getProfile();
 
     const getProfile = async () => {
-
+      
       if (!account) {
         console.log("Connection or wallet not available");
         setPage("Welcoming");
         return;
-      } else {
-        let response = await axios.get(`http://localhost:4000/users/${account.address}`);
+      }
+
+      try {
+        let response = await fetchProfile(account.address);
         
         console.log(response);
 
-        if (response.statusText === "OK") {
+        if (response.status === "success") {
           if (response.data === null) {
             setPage("Register");
             return;
           }
-          
+
           if (response.data.role === "patient") {
             setPage("Patient");
           } else if (response.data.role === "doctor") {
@@ -57,7 +59,11 @@ const HomePage = () => {
           // Direct to register if unable to find profile
           setPage("Register");
         }
+        
+      } catch (error) {
+        setPage("Register");
       }
+
     }
 
     getProfile();

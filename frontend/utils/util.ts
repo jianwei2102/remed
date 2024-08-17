@@ -1,9 +1,18 @@
+import axios from "axios";
 import { format } from "date-fns";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-const fetchProfile = async () => {
+const fetchProfile = async (address: String) => {
   try {
-    return { status: "success", data: "profileData" };
+    let response = await axios.get(`http://localhost:4000/users/${address}`);
+
+    if (response.statusText === "OK") {
+      return { status: "success", data: response.data };
+    } else {
+      return { status: "error", data: response.statusText };
+    }
+
   } catch (error) {
     console.error("Error reading profile:", error);
     return { status: "error", data: error };

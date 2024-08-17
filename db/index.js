@@ -19,7 +19,7 @@ app.get('/users', async (req, res) => {
 app.post('/users', async (req, res) => {
     const user = new User({
         userInfo: req.body.userInfo,
-        aptosAddress: req.body.aptosAddress,
+        address: req.body.address,
         maschainAddress: req.body.maschainAddress,
         role: req.body.role
     });
@@ -30,7 +30,7 @@ app.post('/users', async (req, res) => {
 
 app.get('/users/:id', async (req, res) => {
     const user = await User.findOne({
-        aptosAddress: req.params.id
+        address: req.params.id
     });
 
     res.json(user);

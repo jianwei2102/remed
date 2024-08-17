@@ -107,7 +107,7 @@ const PatientRegister = () => {
 
       let response = await axios.post("http://localhost:4000/users", {
         userInfo: JSON.stringify(formattedValues),
-        aptosAddress: account?.address,
+        address: account?.address,
         maschainAddress: formattedValues.patient.maschainAddress,
         role: "patient",
       });
