@@ -16,6 +16,7 @@ import { WalletSelector } from "./components/WalletSelector.tsx";
 import {
   HomePage,
   PurchaseRecord,
+  Collection,
   Authorization,
   MedicalRecords,
   Medications,
@@ -105,7 +106,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/purchaseRecord" element={<PurchaseRecord />} />
-                  {/*<Route path="/authorization" element={<Authorization />} />
+                  <Route path="/collection" element={<Collection />} />
                   <Route path="/authorization" element={<Authorization />} />
                   <Route path="/medicalRecord" element={<MedicalRecords />} />
                   <Route path="/medications" element={<Medications />} />
@@ -117,7 +118,7 @@ function App() {
                   <Route path="/doctor/viewRecord" element={<ViewRecord />} />
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
-                  <Route path="/doctor/profile" element={<DoctorProfile />} /> */}
+                  <Route path="/doctor/profile" element={<DoctorProfile />} />
                 </Routes>
               </div>
             </Content>
