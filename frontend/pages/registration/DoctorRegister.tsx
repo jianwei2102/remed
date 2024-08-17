@@ -5,6 +5,7 @@ import { FaInfo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createProfile } from "../../utils/util.ts";
 import { useStorageUpload } from "@thirdweb-dev/react";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image } from "antd";
 
@@ -15,55 +16,96 @@ const DoctorRegister = () => {
   const navigate = useNavigate();
   // const { connection } = useConnection();
   // const wallet = useAnchorWallet() as Wallet;
-  // const { mutateAsync: upload } = useStorageUpload();
+  const { mutateAsync: upload } = useStorageUpload();
+  const { account, connected } = useWallet();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
 
-  // const uploadToIpfs = async (file: File) => {
-  //   try {
-  //     const uploadUrl = await upload({
-  //       data: [file],
-  //       options: {
-  //         uploadWithoutDirectory: true,
-  //         uploadWithGatewayUrl: true,
-  //       },
-  //     });
+  const uploadToIpfs = async (file: File) => {
+    try {
+      const uploadUrl = await upload({
+        data: [file],
+        options: {
+          uploadWithoutDirectory: true,
+          uploadWithGatewayUrl: true,
+        },
+      });
 
-  //     const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
-  //     console.log("IPFS CID:", cid);
-  //     return cid;
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //     throw error;
-  //   }
-  // };
+      const cid = uploadUrl[0].split("/ipfs/")[1].split("/")[0];
+      console.log("IPFS CID:", cid);
+      return cid;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  };
 
   const onFinish = async (values: any) => {
     // Combine the title and full name
-    // const { fullName, ...rest } = values;
-    // const combinedFullName = `${fullName.title} ${fullName.name}`;
-    // // Update the values with the combined full name
-    // const formattedValues = {
-    //   ...rest,
-    //   fullName: combinedFullName,
-    // };
-    // try {
-    //   messageApi.open({
-    //     type: "loading",
-    //     content: "Uploading image file(s) to IPFS..",
-    //     duration: 0,
-    //   });
-    //   if (file) {
-    //     const cid = await uploadToIpfs(file);
-    //     formattedValues.image = cid; // Replace image with CID
-    //   }
-    //   messageApi.destroy();
-    //   console.log("Received values of form: ", formattedValues);
-    // } catch (error) {
-    //   console.error("Error uploading file(s) to IPFS:", error);
-    // }
+    const { fullName, ...rest } = values;
+    const combinedFullName = `${fullName.title} ${fullName.name}`;
+    // Update the values with the combined full name
+    const formattedValues = {
+      ...rest,
+      fullName: combinedFullName,
+    };
+
+    // Upload Image to IPFS
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Uploading image file(s) to IPFS..",
+        duration: 0,
+      });
+      if (file) {
+        const cid = await uploadToIpfs(file);
+        formattedValues.image = cid; // Replace image with CID
+      }
+      messageApi.destroy();
+    } catch (error) {
+      console.error("Error uploading file(s) to IPFS:", error);
+    }
+
+    // Add Info to DB
+    try {
+      messageApi.open({
+        type: "loading",
+        content: "Adding information to database in progress..",
+        duration: 0,
+      });
+
+      let response = await axios.post("http://localhost:4000/users", {
+        userInfo: JSON.stringify(formattedValues),
+        aptosAddress: account?.address,
+        maschainAddress: "",
+        role: "doctor",
+      });
+
+      messageApi.destroy();
+
+      console.log(response);
+
+      if (response.statusText === "OK") {
+        messageApi.open({
+          type: "success",
+          content: "User profile created successfully",
+        });
+        setTimeout(() => {
+          navigate("/authorization");
+        }, 500);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Error creating user profile",
+        });
+      }
+
+    } catch (error) {
+      console.error("Error adding information to database:", error);
+    }
+
     // messageApi.open({
     //   type: "loading",
     //   content: "Transaction in progress..",

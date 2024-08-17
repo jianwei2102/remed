@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: {
+    userInfo: {
         type: String,
         required: true
     },
@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     },
     maschainAddress: {
         type: String,
-        required: true
+        required: false
     },
     role: {
         type: String,
