@@ -1,6 +1,6 @@
 import { Button, message } from "antd";
 import { LuPill } from "react-icons/lu";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { MdOutlinePeopleAlt } from "react-icons/md";
@@ -8,6 +8,9 @@ import img from "../../assets/patientDashboard.png";
 import { AuthorizationCard, MedicationCard } from "../../components/";
 
 import { decryptData, fetchAuthDoctor, fetchRecord, processRecords } from "../../utils/util.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
 
 interface AuthorizedDoctor {
   address: string;
@@ -21,26 +24,53 @@ const PatientDashboard = () => {
   const [authorized, setAuthorized] = useState<AuthorizedDoctor[]>([]);
   const [activeMedications, setActiveMedications] = useState<any[]>([]);
 
+  const { account, signAndSubmitTransaction } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
+  const getAuthDoctor = useCallback(async () => {
+    if (blockchain === "Aptos") {
+      const authListResource = await aptos.getAccountResource({
+        accountAddress: wallet,
+        resourceType: `${moduleAddress}::remed::AuthList`,
+      });
+      console.log("authListResource", authListResource);
+      setAuthorized((authListResource as { authorized: AuthorizedDoctor[] })?.authorized.reverse());
+
+      const emrListResource = await aptos.getAccountResource({
+        accountAddress: wallet,
+        resourceType: `${moduleAddress}::remed::EMRList`,
+      });
+      const accountData = (
+        emrListResource as {
+          records: {
+            recordHash: string;
+            recordType: string;
+            recordDetails: string;
+          }[];
+        }
+      ).records;
+      console.log("accountData", accountData);
+      // Filter records where recordType is "medicalRecord"
+      let filteredRecords = accountData.filter((record) => record.recordType === "medication");
+      // console.log("filteredRecords", filteredRecords);
+      // Decrypt and map recordDetails
+      let decryptedRecords = filteredRecords
+        .map((record) => {
+          return decryptData(record.recordDetails);
+        })
+        .reverse();
+      const processedRecords = processRecords(decryptedRecords)
+        .flatMap((record) => record.medications)
+        .filter((med: any) => med.current) // Filter to get current medications
+        .slice(0, 3); // Get the first 3 medications
+
+      setActiveMedications(processedRecords);
+    }
+  }, [account, wallet]);
+
   useEffect(() => {
-    // if (connection && wallet) {
-    //   // Fetch authorized doctors
-    //   fetchAuthDoctor(connection, wallet).then((response) => {
-    //     if (response.status === "success") {
-    //       setAuthorized((response.data as { authorized: AuthorizedDoctor[] })?.authorized.reverse());
-    //     }
-    //   });
-    //   // Fetch medication records and process them
-    //   fetchRecord(connection, wallet).then(async (response) => {
-    //     if (response.status === "success") {
-    //       let accountData = (
-    //         response.data as {
-    //           records: {
-    //             recordHash: string;
-    //             recordType: string;
-    //             recordDetails: string;
-    //           }[];
-    //         }
-    //       ).records;
     //       // Filter records where recordType is "medication"
     //       let filteredRecords = accountData.filter((record) => record.recordType === "medication");
     //       // Decrypt recordDetails
@@ -60,7 +90,16 @@ const PatientDashboard = () => {
     //     }
     //   });
     // }
-  }, []);
+    if (blockchain === "Ethereum") {
+      setWallet(connectedAddress ? connectedAddress : "");
+    } else if (blockchain === "Aptos") {
+      setWallet(account?.address ? account?.address : "");
+    } else {
+      navigate("/");
+    }
+
+    getAuthDoctor();
+  }, [getAuthDoctor]);
 
   const revokeDoctorCallback = (doctorAddress: string) => {
     setAuthorized((prev) => prev.filter((item) => item.address !== doctorAddress));
