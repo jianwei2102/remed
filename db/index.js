@@ -37,6 +37,31 @@ app.get('/users/:id', async (req, res) => {
     res.json(user);
 });
 
+
+// Add maschain tokens that can be minted to a user
+app.post('/users/:id/add-maschain-tokens', async (req, res) => {
+    const tokensToAdd = req.body.number;
+
+    const user = await User.findOne({
+        address: req.params.id
+    });
+
+    let tokensNum = user.maschainTokenNum + tokensToAdd;
+
+    await User.updateOne(
+        {address: req.params.id}, 
+        {maschainTokenNum: tokensNum}, 
+        function (err, docs) {
+            if (err){
+                console.log(err)
+            }
+            else{
+                console.log("Updated Docs : ", docs);
+            }
+    });
+});
+
+
 // Get authorized doctor by address
 app.get('/doctor/:id', async (req, res) => {
     const user = await User.findOne({
