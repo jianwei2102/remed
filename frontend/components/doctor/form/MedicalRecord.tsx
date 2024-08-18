@@ -2,9 +2,13 @@ import dayjs from "dayjs";
 import { format } from "date-fns";
 
 import { useLocation } from "react-router-dom";
-import { appendRecord, generateHash } from "../../../utils/util.ts";
+import { appendRecord, encryptData, decryptData, generateHash } from "../../../utils/util.ts";
 
 import { Button, Card, DatePicker, Form, Input, message, Select, Space, TimePicker } from "antd";
+import { useState } from "react";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
 
 const MedicalRecord = () => {
   const [form] = Form.useForm();
@@ -15,19 +19,24 @@ const MedicalRecord = () => {
   const patientName = location.state?.name;
   const patientAddress = location.state?.address;
 
+  const { account, signAndSubmitTransaction } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   const onFinish = async (values: any) => {
-    // const record = {
-    //   ...values,
-    //   date: format(values.date.toDate(), "dd-MM-yyyy"),
-    //   time: format(values.time.toDate(), "hh:mm a"),
-    // };
-    // const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
-    // console.log(record, recordHash);
-    // messageApi.open({
-    //   type: "loading",
-    //   content: "Transaction in progress..",
-    //   duration: 0,
-    // });
+    const record = {
+      ...values,
+      date: format(values.date.toDate(), "dd-MM-yyyy"),
+      time: format(values.time.toDate(), "hh:mm a"),
+    };
+    const recordHash = generateHash(JSON.stringify(record), wallet, patientAddress);
+    console.log(record, recordHash);
+    messageApi.open({
+      type: "loading",
+      content: "Transaction in progress..",
+      duration: 0,
+    });
     // let response = await appendRecord(
     //   connection,
     //   wallet,
@@ -36,14 +45,33 @@ const MedicalRecord = () => {
     //   patientAddress,
     //   "medicalRecords",
     // );
-    // messageApi.destroy();
+    let encrptedRecord = encryptData(JSON.stringify(record));
+
+    if (blockchain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::append_record`,
+          functionArguments: [patientAddress, recordHash, encrptedRecord, "medicalRecords"],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    messageApi.destroy();
     // if (response.status === "success") {
-    //   // Reset the form fields to their initial state
-    //   form.resetFields();
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "Record created successfully!",
-    //   });
+    // Reset the form fields to their initial state
+    form.resetFields();
+    messageApi.open({
+      type: "success",
+      content: "Record created successfully!",
+    });
     // } else {
     //   messageApi.open({
     //     type: "error",

@@ -116,7 +116,7 @@ const DoctorRegister = () => {
         });
         setTransactionInProgress(false);
         setTimeout(() => {
-          navigate("/authorization");
+          navigate("/doctor/authorization");
         }, 500);
       } else {
         messageApi.open({

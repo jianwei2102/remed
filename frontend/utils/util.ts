@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format } from "date-fns";
-// import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 const fetchProfile = async (address: String) => {
@@ -12,7 +12,6 @@ const fetchProfile = async (address: String) => {
     } else {
       return { status: "error", data: response.statusText };
     }
-
   } catch (error) {
     console.error("Error reading profile:", error);
     return { status: "error", data: error };
@@ -70,7 +69,6 @@ const fetchAuthDoctor = async (address: any) => {
     } else {
       return { status: "error", data: response.statusText };
     }
-
   } catch (error) {
     console.error("Error reading profile:", error);
     return { status: "error", data: error };
@@ -192,6 +190,7 @@ const processRecords = (decryptedRecords: string[]): any[] => {
 
 export {
   fetchProfile,
+  encryptData,
   decryptData,
   authorizeDoctor,
   revokeDoctor,

@@ -9,6 +9,7 @@ import { Button, Divider, Flex, Input, message, Modal, Segmented, Space } from "
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { useEthContractContext } from "@/context/sepoliaContract";
 import { fetchProfile } from "@/utils/util";
+import { aptos, moduleAddress } from "@/utils/aptos";
 
 interface AuthorizedPatient {
   address: string;
@@ -49,23 +50,29 @@ const Authorization = () => {
     //     );
     //   }
     // }
-    // try {
-    //   const response = await axios.get("http://localhost:4000/doctorRequests");
-    //   const requests = response.data
-    //     .filter(
-    //       (request: any) =>
-    //         request.doctorAddress === wallet.publicKey.toBase58()
-    //     )
-    //     .map((request: any) => ({
-    //       id: request._id,
-    //       address: request.patientAddress,
-    //       date: request.requestDate,
-    //     }));
-    //   setRequested(requests);
-    //   console.log("Request fetched:", response.data);
-    // } catch (error) {
-    //   console.error("Error fetching request:", error);
-    // }
+    try {
+      const response = await axios.get("http://localhost:4000/doctorRequests");
+      const requests = response.data
+        .filter((request: any) => request.doctorAddress === wallet)
+        .map((request: any) => ({
+          id: request._id,
+          address: request.patientAddress,
+          date: request.requestDate,
+        }));
+      setRequested(requests);
+      console.log("Request fetched:", response.data);
+    } catch (error) {
+      console.error("Error fetching request:", error);
+    }
+
+    if (blockchain === "Aptos") {
+      const authListResource = await aptos.getAccountResource({
+        accountAddress: wallet,
+        resourceType: `${moduleAddress}::remed::AuthList`,
+      });
+      console.log("authListResource", authListResource);
+      setAuthorized((authListResource as { authorized: AuthorizedPatient[] })?.authorized.reverse());
+    }
   }, []);
 
   const checkAuthority = useCallback(async () => {
@@ -98,38 +105,34 @@ const Authorization = () => {
   }, [navigate, getAuthPatient]);
 
   const checkPatientRole = async (patientAddress: string) => {
-    // const isAuthorized = authorized.some(
-    //   (patient) => patient.address === patientAddress
-    // );
-    // const isRequested = requested.some(
-    //   (patient) => patient.address === patientAddress
-    // );
+    const isAuthorized = authorized.some((patient) => patient.address === patientAddress);
+    const isRequested = requested.some((patient) => patient.address === patientAddress);
 
-    // if (isAuthorized || isRequested) {
-    //   return false; // Already authorized, so return false
-    // }
+    if (isAuthorized || isRequested) {
+      return false; // Already authorized, so return false
+    }
 
-    // try {
-    //   const publicKey = new web3.PublicKey(patientAddress);
-    //   const patientWallet = { publicKey } as Wallet;
+    // Check if the address belongs to a registered patient
+    try {
+      let response = await fetchProfile(patientAddress);
+      console.log(response);
 
-    //   let response = await fetchProfile(connection, patientWallet);
-    //   if (response.status !== "success") {
-    //     return false;
-    //   }
+      if (response.status === "success") {
+        if (response.data === null) {
+          return false;
+        }
 
-    //   const { role } = response.data as { role: string };
-
-    //   if (role === "patient") {
-    //     console.log(response.data);
-    //     return true;
-    //   }
-
-    //   return false;
-    // } catch (error) {
-    //   console.error("Error checking patient role:", error);
-    //   return false;
-    // }
+        if (response.data.role === "patient") {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
     return true;
   };
 

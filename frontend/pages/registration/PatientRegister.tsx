@@ -140,7 +140,7 @@ const PatientRegister = () => {
           content: "User profile created successfully",
         });
         setTimeout(() => {
-          navigate("/doctor/authorization");
+          navigate("/authorization");
         }, 500);
       } else {
         messageApi.open({
