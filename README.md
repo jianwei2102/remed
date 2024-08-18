@@ -31,4 +31,17 @@ Some commands are built-in the template and can be ran as a npm script, for exam
 - `npm run deploy` - a command to deploy the dapp to Vercel
 
 For all other available CLI commands, can run `npx aptos` and see a list of all available commands.
+
 # remed
+
+## Contract deployed on Sepolia
+[https://sepolia.etherscan.io/address/0x5c184daf813ec32b77f393065802fd146bfbb121](https://sepolia.etherscan.io/address/0x5c184daf813ec32b77f393065802fd146bfbb121)
+
+## Contract deployed on Scroll
+[https://sepolia.scrollscan.com/address/0xfd4a2eabccd33ed20519162944d988c1202de089](https://sepolia.scrollscan.com/address/0xfd4a2eabccd33ed20519162944d988c1202de089)
+
+## Contract deployed on Aptos
+[https://explorer.aptoslabs.com/account/0xb289ca0db88599a6f7f952621b674aeeb2c7080696a887c6bc3d480ea354f510/transactions?network=devnet](https://explorer.aptoslabs.com/account/0xb289ca0db88599a6f7f952621b674aeeb2c7080696a887c6bc3d480ea354f510/transactions?network=devnet)
+
+## Token contract on MasChain
+`0xa641F3a1be580Fc5a87f0D0b7bA3AD08c384a89D`
