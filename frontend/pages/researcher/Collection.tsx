@@ -46,15 +46,15 @@ const columns: TableColumnsType<DataType> = [
 const data: DataType[] = [
   {
     key: "1",
-    name: "John Brown",
+    name: "Record 1",
   },
   {
     key: "2",
-    name: "Jim Green",
+    name: "Record 2",
   },
   {
     key: "3",
-    name: "Joe Black",
+    name: "Record 3",
   },
 ];
 
@@ -101,10 +101,9 @@ const Collection = () => {
       }
       let response = await fetchProfile(account.address);
       if (response.status === "success") {
-        
         if (response.data.role !== "researcher") {
           navigate("/");
-        } 
+        }
       } else {
         navigate("/");
       }
