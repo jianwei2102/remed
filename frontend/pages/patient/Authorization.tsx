@@ -6,6 +6,9 @@ import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import { DoctorAuthorized, QRReader, DoctorRequested } from "../../components";
 import { authorizeDoctor, fetchAuthDoctor, fetchProfile } from "../../utils/util.ts";
 import { Button, Divider, Flex, Input, Space, Segmented, Modal, message } from "antd";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
 
 interface AuthorizedDoctor {
   address: string;
@@ -30,57 +33,94 @@ const Authorization = () => {
   const [segmentedValue, setSegmentedValue] = useState<string>("View All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const { account, signAndSubmitTransaction } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   const getAuthDoctor = useCallback(async () => {
-    // if (connection && wallet) {
-    //   let response = await fetchAuthDoctor(connection, wallet);
-    //   if (response.status === "success") {
-    //     setAuthorized(
-    //       (
-    //         response.data as { authorized: AuthorizedDoctor[] }
-    //       )?.authorized.reverse()
-    //     );
-    //   }
-    // }
-    // try {
-    //   const response = await axios.get("http://localhost:4000/doctorRequests");
-    //   const requests = response.data
-    //     .filter(
-    //       (request: any) =>
-    //         request.patientAddress === wallet.publicKey.toBase58()
-    //     )
-    //     .map((request: any) => ({
-    //       id: request._id,
-    //       address: request.doctorAddress,
-    //       date: request.requestDate,
-    //     }));
-    //   setRequested(requests);
-    //   console.log("Request fetched:", response.data);
-    // } catch (error) {
-    //   console.error("Error fetching request:", error);
-    // }
-  }, []);
+    try {
+      const response = await axios.get("http://localhost:4000/doctorRequests");
+      const requests = response.data
+        .filter((request: any) => request.patientAddress === wallet)
+        .map((request: any) => ({
+          id: request._id,
+          address: request.doctorAddress,
+          date: request.requestDate,
+        }));
+      setRequested(requests);
+      console.log("Request fetched:", response.data);
+    } catch (error) {
+      console.error("Error fetching request:", error);
+    }
+
+    if (blockchain === "Aptos") {
+      const authListResource = await aptos.getAccountResource({
+        accountAddress: wallet,
+        resourceType: `${moduleAddress}::remed::AuthList`,
+      });
+      console.log("authListResource", authListResource);
+      setAuthorized((authListResource as { authorized: AuthorizedDoctor[] })?.authorized.reverse());
+    }
+  }, [account, wallet]);
 
   const checkAuthority = useCallback(async () => {
-    // if (!connection || !wallet) {
-    //   navigate("/");
-    //   return;
-    // }
-    // let response = await fetchProfile(connection, wallet as Wallet);
-    // if (response.status === "success") {
-    //   const role = (response.data as { role: string }).role;
-    //   if (role === "patient") {
-    //     getAuthDoctor();
-    //   } else if (role === "doctor") {
-    //     navigate("/");
-    //   }
-    // } else {
-    //   navigate("/");
-    // }
-  }, [navigate, getAuthDoctor]);
+    if (blockchain === "Ethereum") {
+      setWallet(connectedAddress ? connectedAddress : "");
+    } else if (blockchain === "Aptos") {
+      setWallet(account?.address ? account?.address : "");
+    } else {
+      navigate("/");
+    }
+
+    let response = await fetchProfile(wallet);
+    console.log(response);
+
+    if (response.status === "success") {
+      if (response.data === null) {
+        navigate("/");
+      }
+
+      if (response.data.role === "patient") {
+        getAuthDoctor();
+      } else if (response.data.role === "doctor") {
+        navigate("/");
+      } else if (response.data.role === "researcher") {
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
+  }, [blockchain, wallet, navigate, getAuthDoctor, connectedAddress, account]);
 
   useEffect(() => {
     checkAuthority();
   }, [checkAuthority]);
+  
+  useEffect(() => {
+
+  }, []);
+
+  // Check If account changed
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+  };
+    getProfile();
+  }, [account]);
 
   const checkDoctorRole = async (doctorAddress: string) => {
     const isAuthorized = authorized.some((doctor) => doctor.address === doctorAddress);
@@ -89,65 +129,83 @@ const Authorization = () => {
     }
 
     // Check if the address belongs to a registered healthcare provider
-    // try {
-    //   const publicKey = new web3.PublicKey(doctorAddress);
-    //   const doctorWallet = { publicKey } as Wallet;
+    try {
+      let response = await fetchProfile(doctorAddress);
+      console.log(response);
 
-    //   let response = await fetchProfile(connection, doctorWallet);
-    //   if (response.status !== "success") {
-    //     return false;
-    //   }
+      if (response.status === "success") {
+        if (response.data === null) {
+          return false;
+        }
 
-    //   const { role } = response.data as { role: string };
-
-    //   if (role === "doctor") {
-    //     console.log(response.data);
-    //     return true;
-    //   }
-
-    //   return false;
-    // } catch (error) {
-    //   console.error("Error checking doctor role:", error);
-    //   return false;
-    // }
+        if (response.data.role === "doctor") {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
   };
 
   const authorizeDoc = async (doctorAddress: string) => {
-    //   messageApi.open({
-    //     type: "loading",
-    //     content: "Transaction in progress..",
-    //     duration: 0,
-    //   });
-    //   let validDoctorAddress = await checkDoctorRole(doctorAddress);
-    //   if (!validDoctorAddress) {
-    //     messageApi.destroy();
-    //     messageApi.open({
-    //       type: "error",
-    //       content: "Invalid doctor address",
-    //     });
-    //     setConfirmLoading(false);
-    //     return;
-    //   }
-    //   let response = await authorizeDoctor(connection, wallet as Wallet, doctorAddress);
-    //   messageApi.destroy();
-    //   if (response.status === "success") {
-    //     messageApi.open({
-    //       type: "success",
-    //       content: "Doctor authorized successfully",
-    //     });
-    //     const newAuthorized: AuthorizedDoctor = {
-    //       address: doctorAddress,
-    //       date: format(new Date(), "MMMM d, yyyy"),
-    //     };
-    //     setAuthorized((prev) => [...prev, newAuthorized]);
-    //     return true;
-    //   } else {
-    //     messageApi.open({
-    //       type: "error",
-    //       content: "Error authorizing doctor",
-    //     });
-    //     return false;
-    //   }
+    messageApi.open({
+      type: "loading",
+      content: "Transaction in progress..",
+      duration: 0,
+    });
+
+    let validDoctorAddress = await checkDoctorRole(doctorAddress);
+    if (!validDoctorAddress) {
+      messageApi.destroy();
+      messageApi.open({
+        type: "error",
+        content: "Invalid doctor address",
+      });
+      setConfirmLoading(false);
+      return;
+    }
+
+    // Remed Contract - Aptos
+    if (import.meta.env.VITE_APP_BlockChain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::authorize_doctor`,
+          functionArguments: [doctorAddress, format(new Date(), "MMMM d, yyyy")],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+
+        messageApi.destroy();
+        // if (response.status === "success") {
+        messageApi.open({
+          type: "success",
+          content: "Doctor authorized successfully",
+        });
+        const newAuthorized: AuthorizedDoctor = {
+          address: doctorAddress,
+          date: format(new Date(), "MMMM d, yyyy"),
+        };
+        setAuthorized((prev) => [...prev, newAuthorized]);
+        return true;
+        // } else {
+        //   messageApi.open({
+        //     type: "error",
+        //     content: "Error authorizing doctor",
+        //   });
+        //   return false;
+        // }
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
   };
 
   const handleScanSuccess = (result: string) => {
@@ -167,41 +225,41 @@ const Authorization = () => {
   };
 
   const revokeDoctorCallback = (doctorAddress: string) => {
-    //   setAuthorized((prev) => prev.filter((item) => item.address !== doctorAddress));
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "Doctor revoked successfully",
-    //   });
+    setAuthorized((prev) => prev.filter((item) => item.address !== doctorAddress));
+    messageApi.open({
+      type: "success",
+      content: "Doctor revoked successfully",
+    });
   };
 
   const revokeRequestCallback = async (doctorId: string) => {
-    // try {
-    //   await axios.delete(`http://localhost:4000/doctorRequests/${doctorId}`);
-    //   setRequested((prev) => prev.filter((item) => item.id !== doctorId));
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "Doctor request revoked successfully",
-    //   });
-    // } catch (error) {
-    //   messageApi.open({
-    //     type: "error",
-    //     content: "Error revoking doctor request",
-    //   });
-    // }
+    try {
+      await axios.delete(`http://localhost:4000/doctorRequests/${doctorId}`);
+      setRequested((prev) => prev.filter((item) => item.id !== doctorId));
+      messageApi.open({
+        type: "success",
+        content: "Doctor request revoked successfully",
+      });
+    } catch (error) {
+      messageApi.open({
+        type: "error",
+        content: "Error revoking doctor request",
+      });
+    }
   };
 
   const authorizeRequestCallback = async (doctorId: string, doctorAddress: string) => {
-    // try {
-    //   const response = await authorizeDoc(doctorAddress);
-    //   if (response) {
-    //     await revokeRequestCallback(doctorId);
-    //   }
-    // } catch (error) {
-    //   messageApi.open({
-    //     type: "error",
-    //     content: "Error authorize doctor request",
-    //   });
-    // }
+    try {
+      const response = await authorizeDoc(doctorAddress);
+      if (response) {
+        await revokeRequestCallback(doctorId);
+      }
+    } catch (error) {
+      messageApi.open({
+        type: "error",
+        content: "Error authorize doctor request",
+      });
+    }
   };
 
   const filteredAuthorized = authorized.filter((item) =>

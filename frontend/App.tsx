@@ -1,11 +1,4 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-// Internal Components
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Header } from "@/components/Header";
-import { WalletDetails } from "@/components/WalletDetails";
-import { NetworkInfo } from "@/components/NetworkInfo";
-import { AccountInfo } from "@/components/AcoountInfo";
-
 import { useState } from "react";
 import { Button, Layout, theme } from "antd";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
@@ -28,6 +21,7 @@ import {
   Settings,
   ViewRecord,
   ModifyRecord,
+  RewardPage,
 } from "./pages/index.tsx";
 import Test from "./pages/test";
 import { ConnectWallet } from "@thirdweb-dev/react";
@@ -35,7 +29,6 @@ import { ConnectWallet } from "@thirdweb-dev/react";
 const { Header, Sider, Content } = Layout;
 
 function App() {
-  const { connected } = useWallet();
 
   const [darkTheme, setDarkTheme] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -96,11 +89,12 @@ function App() {
                 onClick={() => setCollapsed(!collapsed)}
               />
               <DateTime />
+              {import.meta.env.VITE_APP_BlockChain === "Aptos" ? <WalletSelector /> : <ConnectWallet />}
               {/* Aptos Wallet */}
               {/* <WalletSelector /> */}
 
               {/* Sepolia and Scroll Wallet */}
-              <ConnectWallet />
+            {/* <ConnectWallet /> */}
             </Header>
 
             <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
@@ -125,7 +119,7 @@ function App() {
                   <Route path="/doctor/modifyRecord" element={<ModifyRecord />} />
                   <Route path="/doctor/appendRecord" element={<AppendRecord />} />
                   <Route path="/doctor/profile" element={<DoctorProfile />} />
-                  <Route path="/researcher/purchaseRecord" element={<PurchaseRecord />} />
+                  <Route path="/rewards" element={<RewardPage />} />
                 </Routes>
               </div>
             </Content>

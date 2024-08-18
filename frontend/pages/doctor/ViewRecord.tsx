@@ -3,6 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LabResultView, MedicalRecordView, MedicationView } from "../../components";
 import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
 
 interface Record {
   recordHash: string;
@@ -48,6 +51,11 @@ const ViewRecord = () => {
   const [patientAddress, setPatientAddress] = useState<string | undefined>(location.state?.address);
   const [patientName, setPatientName] = useState<string | undefined>(location.state?.name);
 
+  const { account } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   const [records, setRecords] = useState<CategorizedRecords>({
     labResults: [],
     medicalRecords: [],
@@ -63,7 +71,7 @@ const ViewRecord = () => {
       };
 
       accountData.forEach((record) => {
-        const decryptedData = decryptData(record.recordDetails, "record");
+        const decryptedData = decryptData(record.recordDetails);
         switch (record.recordType) {
           case "labResults":
             categorizedRecords.labResults.push({
@@ -123,24 +131,36 @@ const ViewRecord = () => {
     // } catch (error) {
     //   console.error("Error creating PublicKey or fetching records:", error);
     // }
+    if (blockchain === "Aptos") {
+      const emrListResource = await aptos.getAccountResource({
+        accountAddress: patientAddress ?? "",
+        resourceType: `${moduleAddress}::remed::EMRList`,
+      });
+      const accountData = (emrListResource as { records: Record[] }).records;
+      handleRecords(accountData);
+      console.log("emrListResource", emrListResource);
+    }
   }, [handleRecords]);
 
   const checkAuthority = useCallback(async () => {
-    // if (!connection || !wallet) {
-    //   navigate("/");
-    //   return;
-    // }
-    // let response = await fetchProfile(connection, wallet);
-    // if (response.status === "success" && response.data) {
-    //   const role = (response.data as { role: string }).role;
-    //   if (role === "patient") {
-    //     navigate("/");
-    //   } else if (role === "doctor") {
-    //     getPatientEMR();
-    //   }
-    // } else {
-    //   navigate("/");
-    // }
+    const getProfile = async () => {
+      if (account) {
+        let response = await fetchProfile(account.address);
+        if (response.status === "success") {
+          if (response.data.role === "patient") {
+            navigate("/");
+          } else if (response.data.role === "doctor") {
+            getPatientEMR();
+          } else if (response.data.role === "researcher") {
+            navigate("/");
+          }
+        }
+      } else {
+        navigate("/");
+      }
+    };
+
+    getProfile();
   }, [navigate, getPatientEMR]);
 
   useEffect(() => {
@@ -162,17 +182,17 @@ const ViewRecord = () => {
     {
       label: "Medical Records",
       key: "1",
-      // children: <MedicalRecordView records={records.medicalRecords} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <MedicalRecordView records={records.medicalRecords} userWallet={wallet ?? ""} />,
     },
     {
       label: "Medications",
       key: "2",
-      // children: <MedicationView records={records.medications} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <MedicationView records={records.medications} userWallet={wallet ?? ""} />,
     },
     {
       label: "Lab Results",
       key: "3",
-      // children: <LabResultView records={records.labResults} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <LabResultView records={records.labResults} userWallet={wallet ?? ""} />,
     },
   ];
 

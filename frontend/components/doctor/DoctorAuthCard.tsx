@@ -62,20 +62,12 @@ const DoctorAuthCard = ({ patientDetails, revokePatientCallback }: DoctorAuthCar
   };
 
   useEffect(() => {
-    // const getProfile = async () => {
-    //   const publicKey = new web3.PublicKey(patientDetails.address);
-    //   const doctorWallet = { publicKey };
-    //   let response = await fetchProfile(connection, doctorWallet as Wallet);
-    //   if (response.status === "success") {
-    //     const decryptedProfile = decryptData(
-    //       (response.data as { personalDetails: string })["personalDetails"],
-    //       "profile",
-    //     );
-    //     setProfile(JSON.parse(decryptedProfile));
-    //     // console.log(JSON.parse(decryptedProfile));
-    //   }
-    // };
-    // getProfile();
+    const getProfile = async () => {
+      let response = await fetchProfile(patientDetails.address);
+      let userInfo = (response.data as { userInfo: string })["userInfo"];
+      setProfile(JSON.parse(userInfo));
+    };
+    getProfile();
   }, [patientDetails]);
 
   const revokePatientFunc = async (patientAddress: string) => {

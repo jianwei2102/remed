@@ -66,22 +66,12 @@ const PatientAuthorized = ({ patientDetails, revokePatientCallback }: PatientAut
   };
 
   useEffect(() => {
-    // const getProfile = async () => {
-    //   const publicKey = new web3.PublicKey(patientDetails.address);
-    //   const patientWallet = { publicKey };
-    //   let response = await fetchProfile(connection, patientWallet as Wallet);
-    //   if (response.status === "success") {
-    //     const decryptedProfile = decryptData(
-    //       (response.data as { personalDetails: string })["personalDetails"],
-    //       "profile"
-    //     );
-    //     setProfile(JSON.parse(decryptedProfile));
-    //   } else {
-    //     // Handle profile not found case
-    //     setProfile(undefined);
-    //   }
-    // };
-    // getProfile();
+    const getProfile = async () => {
+      let response = await fetchProfile(patientDetails.address);
+      let userInfo = (response.data as { userInfo: string })["userInfo"];
+      setProfile(JSON.parse(userInfo));
+    };
+    getProfile();
   }, [patientDetails]);
 
   const revokePatientFunc = async (patientAddress: string) => {

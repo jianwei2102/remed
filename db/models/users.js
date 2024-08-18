@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // blockchain: {
+    //     type: String,
+    //     required: true
+    // },
     maschainAddress: {
         type: String,
         required: false
@@ -20,7 +24,7 @@ const userSchema = new mongoose.Schema({
     maschainTokenNum: {
         type: Number,
         default: 0
-    }
+    },
 });
 
 const User = mongoose.model('User', userSchema);

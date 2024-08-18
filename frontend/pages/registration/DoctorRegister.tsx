@@ -4,9 +4,10 @@ import { FaInfo } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 import { useStorageUpload } from "@thirdweb-dev/react";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
 
-import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image } from "antd";
+import { Form, Row, Col, Input, Button, Select, message, Tooltip, Avatar, Image, Spin } from "antd";
+import { aptos, moduleAddress } from "../../utils/aptos";
 
 const { Option } = Select;
 
@@ -16,11 +17,12 @@ const DoctorRegister = () => {
   // const { connection } = useConnection();
   // const wallet = useAnchorWallet() as Wallet;
   const { mutateAsync: upload } = useStorageUpload();
-  const { account, connected } = useWallet();
+  const { account, signAndSubmitTransaction } = useWallet();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
+  const [transactionInProgress, setTransactionInProgress] = useState<boolean>(false);
 
   const uploadToIpfs = async (file: File) => {
     try {
@@ -50,6 +52,7 @@ const DoctorRegister = () => {
       ...rest,
       fullName: combinedFullName,
     };
+    setTransactionInProgress(true);
 
     // Upload Image to IPFS
     try {
@@ -65,6 +68,26 @@ const DoctorRegister = () => {
       messageApi.destroy();
     } catch (error) {
       console.error("Error uploading file(s) to IPFS:", error);
+    }
+
+    // Auth list - aptos
+    if (import.meta.env.VITE_APP_BlockChain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::creating_auth_list`,
+          functionArguments: [],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+        // setAccountHasList(true);
+      } catch (error) {
+        // setAccountHasList(false);
+        console.log("error", error);
+      }
     }
 
     // Add Info to DB
@@ -91,8 +114,9 @@ const DoctorRegister = () => {
           type: "success",
           content: "User profile created successfully",
         });
+        setTransactionInProgress(false);
         setTimeout(() => {
-          navigate("/authorization");
+          navigate("/doctor/authorization");
         }, 500);
       } else {
         messageApi.open({
@@ -100,38 +124,10 @@ const DoctorRegister = () => {
           content: "Error creating user profile",
         });
       }
-
     } catch (error) {
+      setTransactionInProgress(false);
       console.error("Error adding information to database:", error);
     }
-
-    // messageApi.open({
-    //   type: "loading",
-    //   content: "Transaction in progress..",
-    //   duration: 0,
-    // });
-    // let response = await createProfile(connection, wallet, "doctor", JSON.stringify(formattedValues));
-    // await axios.post("http://localhost:4000/users", {
-    //   username: combinedFullName,
-    //   address: wallet.publicKey.toBase58(),
-    //   role: "doctor",
-    // });
-    // messageApi.destroy();
-    // if (response.status === "success") {
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "User profile created successfully",
-    //   });
-    //   setTimeout(() => {
-    //     navigate("/authorization");
-    //   }, 500);
-    // } else {
-    //   console.log("Error creating user profile:", response);
-    //   messageApi.open({
-    //     type: "error",
-    //     content: "Error creating user profile",
-    //   });
-    // }
   };
 
   return (
@@ -377,9 +373,11 @@ const DoctorRegister = () => {
       </Row>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="px-8 py-4 mt-4 text-lg">
-          Create Profile
-        </Button>
+        <Spin spinning={transactionInProgress}>
+          <Button type="primary" htmlType="submit" className="px-8 py-4 mt-4 text-lg">
+            Create Profile
+          </Button>
+        </Spin>
       </Form.Item>
     </Form>
   );

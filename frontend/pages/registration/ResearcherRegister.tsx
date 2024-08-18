@@ -42,11 +42,10 @@ const ResearcherRegister = () => {
   };
 
   const onFinish = async (values: any) => {
-
     const formattedValues = {
       ...values,
     };
-  
+
     // Upload Image
     try {
       messageApi.open({
@@ -95,7 +94,6 @@ const ResearcherRegister = () => {
           content: "Error creating user profile",
         });
       }
-
     } catch (error) {
       console.error("Error adding information to database:", error);
     }
