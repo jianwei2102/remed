@@ -21,10 +21,10 @@ module remed_addr::remed {
     }
 
     struct EMR has store, drop, copy {
-        record_hash: String,
-        record_details: String,
-        record_type: String,
-        added_by: address,
+        recordHash: String,
+        recordDetails: String,
+        recordType: String,
+        addedBy: address,
     }
     
     // Initializer
@@ -114,16 +114,16 @@ module remed_addr::remed {
     }
 
     // EMR Functions
-    public entry fun append_record(account: &signer, patient_address: address, record_hash: String, record_details: String, record_type: String) acquires EMRList {
+    public entry fun append_record(account: &signer, patient_address: address, recordHash: String, recordDetails: String, recordType: String) acquires EMRList {
         // Get patient's list
         let signer_address = signer::address_of(account);
         let patient_EMR_list = borrow_global_mut<EMRList>(patient_address);
 
         let new_emr = EMR {
-            record_hash,
-            record_details,
-            record_type,
-            added_by: signer_address,
+            recordHash,
+            recordDetails,
+            recordType,
+            addedBy: signer_address,
         };
         vector::push_back(&mut patient_EMR_list.records, new_emr);
     }
