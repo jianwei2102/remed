@@ -182,17 +182,17 @@ const ViewRecord = () => {
     {
       label: "Medical Records",
       key: "1",
-      // children: <MedicalRecordView records={records.medicalRecords} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <MedicalRecordView records={records.medicalRecords} userWallet={wallet ?? ""} />,
     },
     {
       label: "Medications",
       key: "2",
-      // children: <MedicationView records={records.medications} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <MedicationView records={records.medications} userWallet={wallet ?? ""} />,
     },
     {
       label: "Lab Results",
       key: "3",
-      // children: <LabResultView records={records.labResults} userWallet={wallet?.publicKey.toBase58() ?? ""} />,
+      children: <LabResultView records={records.labResults} userWallet={wallet ?? ""} />,
     },
   ];
 
