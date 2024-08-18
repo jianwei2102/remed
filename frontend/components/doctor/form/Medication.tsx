@@ -2,9 +2,13 @@ import dayjs from "dayjs";
 import { format } from "date-fns";
 
 import { useLocation } from "react-router-dom";
-import { appendRecord, generateHash } from "../../../utils/util.ts";
+import { appendRecord, encryptData, generateHash } from "../../../utils/util.ts";
 
 import { Button, Collapse, Form, Input, message, Select, InputNumber } from "antd";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useState } from "react";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
 
 const { Panel } = Collapse;
 
@@ -16,6 +20,11 @@ const Medication = () => {
   const patientName = location.state?.name;
   const patientAddress = location.state?.address;
 
+  const { account, signAndSubmitTransaction } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
     messageApi.open({
@@ -25,26 +34,26 @@ const Medication = () => {
   };
 
   const onFinish = async (values: any) => {
-    // if (!values.medications || values.medications.length === 0) {
-    //   messageApi.open({
-    //     type: "error",
-    //     content: "Please add new medications!",
-    //   });
-    //   return;
-    // }
-    // const record = {
-    //   ...values,
-    //   date: format(dayjs().toDate(), "dd-MM-yyyy"),
-    //   time: format(dayjs().toDate(), "hh:mm a"),
-    //   location: sessionStorage.getItem("affiliations")?.toString(),
-    // };
-    // const recordHash = generateHash(JSON.stringify(record), wallet.publicKey.toBase58(), patientAddress);
-    // console.log(record, recordHash);
-    // messageApi.open({
-    //   type: "loading",
-    //   content: "Transaction in progress..",
-    //   duration: 0,
-    // });
+    if (!values.medications || values.medications.length === 0) {
+      messageApi.open({
+        type: "error",
+        content: "Please add new medications!",
+      });
+      return;
+    }
+    const record = {
+      ...values,
+      date: format(dayjs().toDate(), "dd-MM-yyyy"),
+      time: format(dayjs().toDate(), "hh:mm a"),
+      location: sessionStorage.getItem("affiliations")?.toString(),
+    };
+    const recordHash = generateHash(JSON.stringify(record), wallet, patientAddress);
+    console.log(record, recordHash);
+    messageApi.open({
+      type: "loading",
+      content: "Transaction in progress..",
+      duration: 0,
+    });
     // let response = await appendRecord(
     //   connection,
     //   wallet,
@@ -53,14 +62,34 @@ const Medication = () => {
     //   patientAddress,
     //   "medication",
     // );
-    // messageApi.destroy();
+
+    let encrptedRecord = encryptData(JSON.stringify(record));
+
+    if (blockchain === "Aptos") {
+      const transaction: InputTransactionData = {
+        data: {
+          function: `${moduleAddress}::remed::append_record`,
+          functionArguments: [patientAddress, recordHash, encrptedRecord, "medication"],
+        },
+      };
+      try {
+        // sign and submit transaction to chain
+        const response = await signAndSubmitTransaction(transaction);
+        // wait for transaction
+        await aptos.waitForTransaction({ transactionHash: response.hash });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    messageApi.destroy();
     // if (response.status === "success") {
-    //   // Reset the form fields to their initial state
-    //   form.resetFields();
-    //   messageApi.open({
-    //     type: "success",
-    //     content: "Record created successfully!",
-    //   });
+    // Reset the form fields to their initial state
+    form.resetFields();
+    messageApi.open({
+      type: "success",
+      content: "Record created successfully!",
+    });
     // } else {
     //   messageApi.open({
     //     type: "error",

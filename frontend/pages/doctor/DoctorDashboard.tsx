@@ -6,6 +6,9 @@ import { DoctorAuthCard } from "../../components";
 import { fetchAuthPatient } from "../../utils/util.ts";
 import img from "../../assets/patientDashboard.png";
 import { MdOutlinePeopleAlt } from "react-icons/md";
+import { aptos, moduleAddress } from "@/utils/aptos.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEthContractContext } from "@/context/sepoliaContract.tsx";
 
 interface AuthorizedPatient {
   address: string;
@@ -18,19 +21,43 @@ const DoctorDashboard = () => {
 
   const [authorized, setAuthorized] = useState<AuthorizedPatient[]>([]);
 
+  const { account } = useWallet();
+  const { connectedAddress } = useEthContractContext();
+  let blockchain = import.meta.env.VITE_APP_BlockChain;
+  const [wallet, setWallet] = useState("");
+
   useEffect(() => {
-    // if (connection && wallet) {
-    //   fetchAuthPatient(connection, wallet).then((response) => {
-    //     if (response.status === "success") {
-    //       setAuthorized(
-    //         (
-    //           response.data as { authorized: AuthorizedPatient[] }
-    //         )?.authorized.reverse()
-    //       );
-    //     }
-    //   });
-    // }
-  }, []);
+    const getAuthPatient = async () => {
+      if (blockchain === "Ethereum") {
+        setWallet(connectedAddress ? connectedAddress : "");
+      } else if (blockchain === "Aptos") {
+        setWallet(account?.address ? account?.address : "");
+      } else {
+        navigate("/");
+      }
+
+      if (blockchain === "Aptos" && wallet) {
+        console.log("Fetching authorization list...");
+        // Ensure wallet is set
+        try {
+          const authListResource = await aptos.getAccountResource({
+            accountAddress: wallet,
+            resourceType: `${moduleAddress}::remed::AuthList`,
+          });
+
+          if (authListResource && authListResource.authorized) {
+            setAuthorized((authListResource as { authorized: AuthorizedPatient[] })?.authorized.reverse());
+          } else {
+            console.error("Authorization list is not available or empty");
+          }
+        } catch (error) {
+          console.error("Failed to fetch authorization list:", error);
+        }
+      }
+    };
+
+    getAuthPatient();
+  }, [blockchain, wallet]);
 
   const revokePatientCallback = (patientAddress: string) => {
     setAuthorized((prev) => prev.filter((item) => item.address !== patientAddress));
@@ -45,7 +72,7 @@ const DoctorDashboard = () => {
       {contextHolder}
       <div className="flex flex-row justify-between rounded-3xl text-white text-xl bg-[#37CAEC] mb-8">
         <div className="flex flex-col justify-center items-start pl-10 gap-3">
-          <div className="font-semibold">Hello, {sessionStorage.getItem("name")}!! 👋</div>
+          <div className="font-semibold">Hello {sessionStorage.getItem("name")} 👋</div>
           <div>
             Welcome to <span className="font-semibold">ReMed</span>, where you deliver trusted healthcare and manage
             patient records with ease!
