@@ -22,7 +22,6 @@ interface LabResultItemProps {
 }
 const LabResults = () => {
   const navigate = useNavigate();
-  const { account, connected } = useWallet();
 
   const [labResults, setLabResults] = useState<LabResultItemProps[]>([]);
 

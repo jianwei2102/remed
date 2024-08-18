@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { MedicationItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util.ts";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
@@ -15,7 +14,6 @@ const Medications = () => {
   const [medications, setMedications] = useState<any[]>([]);
   const [medicationHash, setMedicationHash] = useState<string[]>([]);
 
-  const { account } = useWallet();
   const { connectedAddress } = useEthContractContext();
   let blockchain = import.meta.env.VITE_APP_BlockChain;
   const [wallet, setWallet] = useState("");
