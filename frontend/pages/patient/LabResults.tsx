@@ -78,7 +78,7 @@ const LabResults = () => {
       console.log(decryptedRecords);
       setLabResults(decryptedRecords);
     }
-  }, []);
+  }, [account, wallet]);
 
   const getProfile = useCallback(async () => {
     if (blockchain === "Ethereum") {

@@ -76,7 +76,7 @@ const Medications = () => {
       setMedicationHash(filteredRecords.map((record) => record.recordHash));
       // console.log("decryptedRecords", decryptedRecords);
     }
-  }, []);
+  }, [account, wallet]);
 
   const getProfile = useCallback(async () => {
     if (blockchain === "Ethereum") {
@@ -120,10 +120,9 @@ const Medications = () => {
       }
       let response = await fetchProfile(account.address);
       if (response.status === "success") {
-        
         if (response.data.role !== "patient") {
           navigate("/");
-        } 
+        }
       } else {
         navigate("/");
       }

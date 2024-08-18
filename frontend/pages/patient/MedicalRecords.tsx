@@ -72,7 +72,7 @@ const MedicalRecords = () => {
       setMedicalRecords(decryptedRecords.reverse());
       // console.log("decryptedRecords", decryptedRecords);
     }
-  }, []);
+  }, [account, wallet]);
 
   const getProfile = useCallback(async () => {
     if (blockchain === "Ethereum") {
