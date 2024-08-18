@@ -1,78 +1,41 @@
-import {
-  Form,
-  Button,
-  Modal,
-  Input,
-  Checkbox,
-  Select,
-  DatePicker,
-  Row,
-  Col,
-  message,
-  Image,
-  Avatar,
-  Tooltip,
-  Card,
-  Divider,
-} from "antd";
+import { Form, Button, Row, Col, Checkbox, Card, DatePicker, message } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchProfile } from "../../utils/util.ts";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-
-const plainOptions = [
-  "Medical Record",
-  "Medication",
-  "Lab Result - Vital Sign",
-  "Lab Result - X Ray",
-  "Lab Result - Blood Count",
-];
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { aptos } from "@/utils/aptos.ts";
 
 const listOptions = [
   {
     Title: "Medical Record",
-    Price: 0.001,
+    Price: 0.005,
   },
   {
     Title: "Medication",
-    Price: 0.002,
+    Price: 0.01,
   },
-
   {
     Title: "Lab Result - Vital Sign",
-    Price: 0.003,
+    Price: 0.015,
   },
   {
     Title: "Lab Result - X Ray",
-    Price: 0.004,
+    Price: 0.02,
   },
   {
     Title: "Lab Result - Blood Count",
-    Price: 0.005,
+    Price: 0.025,
   },
 ];
 
-import type { CheckboxProps } from "antd";
-
-const CheckboxGroup = Checkbox.Group;
-
 const PurchaseRecord = () => {
   const navigate = useNavigate();
-  const { account, connected } = useWallet();
-
+  const { account, connected, signAndSubmitTransaction } = useWallet();
   const [form] = Form.useForm();
-
   const [price, setPrice] = useState<number>(0);
-
   const [checkedList, setCheckedList] = useState<string[]>([]);
 
-  const printForm = () => {
-    console.log(form.getFieldsValue());
-  };
-
   const onChange = (e: any, index: number) => {
-    console.log(e.target.checked);
-    // Add to checked list if true, else search n remove from checked list
     if (e.target.checked) {
       setCheckedList((prev) => [...prev, e.target.id]);
       setPrice((prev) => Math.round((prev + listOptions[index].Price) * 1000) / 1000);
@@ -80,7 +43,6 @@ const PurchaseRecord = () => {
       setCheckedList((prev) => prev.filter((item) => item !== e.target.id));
       setPrice((prev) => Math.round((prev - listOptions[index].Price) * 1000) / 1000);
     }
-    console.log(checkedList);
   };
 
   useEffect(() => {
@@ -98,10 +60,9 @@ const PurchaseRecord = () => {
       }
       let response = await fetchProfile(account.address);
       if (response.status === "success") {
-        
         if (response.data.role !== "researcher") {
           navigate("/");
-        } 
+        }
       } else {
         navigate("/");
       }
@@ -109,12 +70,40 @@ const PurchaseRecord = () => {
     getProfile();
   }, [account]);
 
+  // Function to handle the transfer
+  const handleCheckout = async () => {
+    if (!account || price <= 0) {
+      message.error("Invalid wallet or amount");
+      return;
+    }
+
+    try {
+      const receiver = "0xf148fa6813a01805e858c07fbb303023a293e07c4e0bcc1a55d6e8d0479ab056"; // replace with the actual receiver wallet address
+      const transaction: InputTransactionData = {
+        data: {
+          function: "0x1::coin::transfer", // Aptos Coin Transfer Function
+          functionArguments: [receiver, (price * 1e8).toString()], // Send amount in the smallest unit (Octas)
+          typeArguments: ["0x1::aptos_coin::AptosCoin"],
+        },
+      };
+
+      // Ensure the transaction is correctly signed and submitted
+      const response = await signAndSubmitTransaction(transaction);
+      await aptos.waitForTransaction({ transactionHash: response.hash }); // Wait for the transaction to be confirmed
+
+      console.log("Transaction response:", response);
+      message.success(" The record has been purchased successfully.");
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      message.error("Transaction failed. Please try again.");
+    }
+  };
+
   return (
     <>
       <Row gutter={16} className="rounded-md">
         <Col span={14} className="!pl-4">
           <div className="text-2xl font-bold">Purchase EMR</div>
-
           <Form form={form} className="mt-4 h-[300px]" layout="vertical">
             <Row gutter={30} className="h-[100%]">
               {listOptions.map((option, index) => (
@@ -123,7 +112,6 @@ const PurchaseRecord = () => {
                     <Checkbox
                       onChange={(e) => {
                         onChange(e, index);
-                        // setPrice(checkedList.length * option.Price);
                       }}
                     >{`${option.Title}  :  ${option.Price} ATP`}</Checkbox>
                   </Form.Item>
@@ -151,29 +139,11 @@ const PurchaseRecord = () => {
                 backgroundColor: "#001529",
               },
             }}
-            style={{
-              width: "100%",
-              boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;",
-              fontWeight: "bold",
-              color: "#1890ff",
-            }}
-            className="rounded-md text-[30px]"
           >
-            <h1 className="text-center font-bold text-[60px]" style={{ color: "#1890ff" }}>
-              {price} ATP
-            </h1>
-            <Divider />
-            {checkedList.map((item) => (
-              <div className="flex justify-between items-center">
-                <p className="text-[16px] text-black mt-3">{item}</p>
-              </div>
-            ))}
-            <Divider />
-            <div className="flex justify-center items-center">
-              <Button className="w-[80%] mt-4" type="primary" size={"large"} onClick={printForm}>
-                Checkout
-              </Button>
-            </div>
+            <p>Total Price: {price} ATP</p>
+            <Button type="primary" onClick={handleCheckout}>
+              Checkout
+            </Button>
           </Card>
         </Col>
       </Row>
