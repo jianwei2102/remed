@@ -178,6 +178,25 @@ const ViewRecord = () => {
     }
   }, [location.state, getPatientEMR, navigate, location.pathname]);
 
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        if (response.data.role !== "doctor") {
+          navigate("/");
+        }
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
+
   const tabItems = [
     {
       label: "Medical Records",

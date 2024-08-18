@@ -2,9 +2,12 @@ import { Tabs } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect } from "react";
 import { LabResultForm, MedicalRecordForm, MedicationForm } from "../../components";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { fetchProfile } from "../../utils/util.ts";
 
 const AppendRecord = () => {
   const navigate = useNavigate();
+  const { account, connected } = useWallet();
 
   const checkAuthority = useCallback(async () => {
     // if (!connection || !wallet) {
@@ -25,6 +28,25 @@ const AppendRecord = () => {
   useEffect(() => {
     checkAuthority();
   }, [checkAuthority]);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        if (response.data.role !== "doctor") {
+          navigate("/");
+        }
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   const tabItems = [
     {

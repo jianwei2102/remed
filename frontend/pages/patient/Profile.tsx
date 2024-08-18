@@ -81,7 +81,7 @@ const Profile = () => {
           // let details = JSON.parse(decryptData(personalDetails, "profile"));
           setDetails(JSON.parse(response.data.userInfo));
           // console.log("details", details);
-        } else if (response.data.role === "doctor") {
+        } else {
           navigate("/");
         }
       } else {
@@ -90,7 +90,7 @@ const Profile = () => {
     };
 
     getProfile();
-  }, [navigate]);
+  }, [account]);
 
   return (
     <>

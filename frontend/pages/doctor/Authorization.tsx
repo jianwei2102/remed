@@ -73,7 +73,7 @@ const Authorization = () => {
       console.log("authListResource", authListResource);
       setAuthorized((authListResource as { authorized: AuthorizedPatient[] })?.authorized.reverse());
     }
-  }, []);
+  }, [account, wallet]);
 
   const checkAuthority = useCallback(async () => {
     if (blockchain === "Ethereum") {
