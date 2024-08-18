@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Divider, Radio, Table, Button } from "antd";
 import type { TableColumnsType } from "antd";
 import { Flex } from "antd";
 import { Parser } from "@json2csv/plainjs";
 import { DownloadOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { fetchProfile } from "../../utils/util.ts";
 
 interface DataType {
   key: React.Key;
@@ -56,6 +59,8 @@ const data: DataType[] = [
 ];
 
 const Collection = () => {
+  const navigate = useNavigate();
+  const { account, connected } = useWallet();
   const [selection, setSelection] = useState("medical-record");
 
   const onDownload = () => {
@@ -86,6 +91,26 @@ const Collection = () => {
       name: record.name,
     }),
   };
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "researcher") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   return (
     <>

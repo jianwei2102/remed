@@ -291,6 +291,26 @@ const Authorization = () => {
     patient.address.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "doctor") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+  };
+    getProfile();
+  }, [account]);
+
   return (
     <div>
       {contextHolder}

@@ -39,17 +39,6 @@ const Authorization = () => {
   const [wallet, setWallet] = useState("");
 
   const getAuthDoctor = useCallback(async () => {
-    // if (connection && wallet) {
-    //   let response = await fetchAuthDoctor(connection, wallet);
-    //   if (response.status === "success") {
-    //     setAuthorized(
-    //       (
-    //         response.data as { authorized: AuthorizedDoctor[] }
-    //       )?.authorized.reverse()
-    //     );
-    //   }
-    // }
-
     try {
       const response = await axios.get("http://localhost:4000/doctorRequests");
       const requests = response.data
@@ -73,7 +62,7 @@ const Authorization = () => {
       console.log("authListResource", authListResource);
       setAuthorized((authListResource as { authorized: AuthorizedDoctor[] })?.authorized.reverse());
     }
-  }, []);
+  }, [account, wallet]);
 
   const checkAuthority = useCallback(async () => {
     if (blockchain === "Ethereum") {
@@ -102,11 +91,36 @@ const Authorization = () => {
     } else {
       navigate("/");
     }
-  }, [navigate, getAuthDoctor]);
+  }, [blockchain, wallet, navigate, getAuthDoctor, connectedAddress, account]);
 
   useEffect(() => {
     checkAuthority();
   }, [checkAuthority]);
+  
+  useEffect(() => {
+
+  }, []);
+
+  // Check If account changed
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+  };
+    getProfile();
+  }, [account]);
 
   const checkDoctorRole = async (doctorAddress: string) => {
     const isAuthorized = authorized.some((doctor) => doctor.address === doctorAddress);

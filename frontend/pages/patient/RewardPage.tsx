@@ -72,6 +72,26 @@ const RewardPage = () => {
     callFunctions();
   }, [account]);
 
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
+
   const getMaschainTokenBalance = async (walletAddr: string) => {
     const data = {
       wallet_address: walletAddr,

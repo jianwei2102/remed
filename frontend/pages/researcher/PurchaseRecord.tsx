@@ -16,6 +16,9 @@ import {
   Divider,
 } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchProfile } from "../../utils/util.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 const plainOptions = [
   "Medical Record",
@@ -54,6 +57,9 @@ import type { CheckboxProps } from "antd";
 const CheckboxGroup = Checkbox.Group;
 
 const PurchaseRecord = () => {
+  const navigate = useNavigate();
+  const { account, connected } = useWallet();
+
   const [form] = Form.useForm();
 
   const [price, setPrice] = useState<number>(0);
@@ -82,6 +88,26 @@ const PurchaseRecord = () => {
       setPrice(0);
     }
   }, [checkedList]);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "researcher") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   return (
     <>

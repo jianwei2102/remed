@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { MedicationItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import { decryptData, fetchProfile, fetchRecord, processRecords } from "../../utils/util.ts";
 
 const Medications = () => {
   const navigate = useNavigate();
+  const { account, connected } = useWallet();
 
   const [medications, setMedications] = useState<any[]>([]);
   const [medicationHash, setMedicationHash] = useState<string[]>([]);
@@ -60,6 +62,26 @@ const Medications = () => {
   useEffect(() => {
     getProfile();
   }, [getProfile]);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   return (
     <div className="overflow-y-auto h-full">

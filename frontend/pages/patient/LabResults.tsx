@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { LabResultItem } from "../../components";
 import { useCallback, useEffect, useState } from "react";
 import { decryptData, fetchProfile, fetchRecord } from "../../utils/util.ts";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 interface Record {
   recordHash: string;
@@ -19,6 +20,7 @@ interface LabResultItemProps {
 }
 const LabResults = () => {
   const navigate = useNavigate();
+  const { account, connected } = useWallet();
 
   const [labResults, setLabResults] = useState<LabResultItemProps[]>([]);
 
@@ -71,6 +73,26 @@ const LabResults = () => {
   useEffect(() => {
     getProfile();
   }, [getProfile]);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!connected || !account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);
 
   return (
     <div>

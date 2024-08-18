@@ -107,6 +107,26 @@ const MedicalRecords = () => {
     getProfile();
   }, [getProfile]);
 
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!account) {
+        console.log("Connection or wallet not found!");
+        navigate("/");
+        return;
+      }
+      let response = await fetchProfile(account.address);
+      if (response.status === "success") {
+        
+        if (response.data.role !== "patient") {
+          navigate("/");
+        } 
+      } else {
+        navigate("/");
+      }
+    };
+    getProfile();
+  }, [account]);  
+
   return (
     <div>
       <div className="font-semibold text-xl mb-4">Medical Record</div>
