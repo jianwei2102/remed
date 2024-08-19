@@ -15,10 +15,10 @@ interface DataType {
 
 const csvData = {
   "medical-record": `[
-  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"},
-  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","location":"Clinic Rayon","remark":"For more than 2 days"}]`,
+  {"visitType":"First Visit","reasonOfVisit":"Patient has symptoms like like cough, sore throat, and fever","diagnosis":"Common Cold","symptoms":["Headache","Shortness of Breath","back pain"],"date":"12-08-2024","time":"12:32 PM","remark":"For more than 2 days"},
+  {"visitType":"Follow-Up Visit","reasonOfVisit":"Patient fainted","diagnosis":"Concussion","symptoms":["Tumor"],"date":"12-06-2024","time":"12:32 PM","remark":"-"},
+  {"visitType":"First Visit","reasonOfVisit":"Patient is pregnant","diagnosis":"Internal Bleeding","symptoms":["Internal Bleeding"],"date":"12-05-2024","time":"12:32 PM","remark":"Contact after 3 days"},
+  {"visitType":"First Visit","reasonOfVisit":"Patient is involved in a car accident","diagnosis":"Drunk Driving","symptoms":["Depression"],"date":"12-04-2024","time":"12:32 PM","remark":"Keep in view"}]`,
   medication: `[
   {"medications":[{"indication":"Antihypertension","medication":"Paracetamol 500mg","frequency":"Twice a day","administration":"Take before food","duration":3},{"indication":"Pain Relief","medication":"Lisinopril 10mg","frequency":"Twice a day","administration":"Take before bedtime","duration":1}],"date":"12-08-2024","time":"12:33 PM","location":"Clinic Rayon"},
   {"medications":[{"indication":"Antihypertension","medication":"Paracetamol 500mg","frequency":"Twice a day","administration":"Take before food","duration":3},{"indication":"Pain Relief","medication":"Lisinopril 10mg","frequency":"Twice a day","administration":"Take before bedtime","duration":1}],"date":"12-08-2024","time":"12:33 PM","location":"Clinic Rayon"},

@@ -1,4 +1,4 @@
-import { Form, Button, Row, Col, Checkbox, Card, DatePicker, message } from "antd";
+import { Form, Button, Row, Col, Checkbox, Card, DatePicker, message, Divider } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchProfile } from "../../utils/util.ts";
@@ -110,6 +110,7 @@ const PurchaseRecord = () => {
                 <Col span={24} key={index} className="mt-5">
                   <Form.Item name={option.Title} valuePropName="checked" className="flex justify-between">
                     <Checkbox
+                      className="text-[22px]"
                       onChange={(e) => {
                         onChange(e, index);
                       }}
@@ -140,10 +141,27 @@ const PurchaseRecord = () => {
               },
             }}
           >
-            <p>Total Price: {price} ATP</p>
-            <Button type="primary" onClick={handleCheckout}>
-              Checkout
-            </Button>
+            <p
+              className="text-[60px] font-bold text-center"
+              style={{
+                color: "#1677ff",
+              }}
+            >
+              Total Price: {price} ATP
+            </p>
+            <Divider />
+            {checkedList.map((item, index) => (
+              <div key={index} className="flex justify-between">
+                <p>{item}</p>
+                <p>{listOptions[index].Price} ATP</p>
+              </div>
+            ))}
+            <Divider />
+            <div className="mt-5 flex justify-center items-center">
+              <Button type="primary" onClick={handleCheckout} className="w-[80%]">
+                Checkout
+              </Button>
+            </div>
           </Card>
         </Col>
       </Row>
